@@ -44,7 +44,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function CreateContent({ mySky }) {
+function CreateContent({ dataDomain, mySky }) {
   const classes = useStyles();
   const [formSchema, setFormSchema] = useState([]);
   const [formData, setFormData] = useState([]);
@@ -57,12 +57,12 @@ function CreateContent({ mySky }) {
     setLoadingAddToExistingJsonData,
   ] = useState(false);
   const [loadinginitFormSchema, setLoadinginitFormSchema] = useState(true);
-  const filePath = "localhost/blogContent";
+  const filePath = dataDomain + "/" + "blogContent";
 
   useEffect(() => {
     async function initFormSchema() {
       try {
-        const filePath = "localhost/formSchema";
+        const filePath = dataDomain + "/" + "formSchema";
         console.log("filePath", filePath);
         const { data } = await mySky.getJSON(filePath);
         console.log("dataget", data);
@@ -128,7 +128,6 @@ function CreateContent({ mySky }) {
   };
 
   const onSubmit = (values, { setSubmitting, resetForm, setStatus }) => {
-    console.log("form-data-values", values);
     let val = [];
     val.push(values);
     setFormData(val);
@@ -150,52 +149,55 @@ function CreateContent({ mySky }) {
       await mySky.setJSON(filePath, jsonData);
       setLoadingSaveJsonData(false);
       setButtonDisabled(false);
+      alert("Data saved");
     } catch (error) {
       console.log(`error with setJSON: ${error.message}`);
     }
   };
 
   const handleMySkyWriteToExistingFile = async (jsonData) => {
-    const { dataTest } = await mySky.getJSON(filePath);
-    if (dataTest !== null) {
-      try {
+    try {
+      setButtonDisabled(true);
+      setLoadingAddToExistingJsonData(true);
+      const { data } = await mySky.getJSON(filePath);
+      if (data !== null) {
         let val = [];
-        setButtonDisabled(true);
-        setLoadingAddToExistingJsonData(true);
         console.log("filePath", filePath);
-        const { data } = await mySky.getJSON(filePath);
+        // const { data } = await mySky.getJSON(filePath);
         data.push(jsonData[0]);
         await mySky.setJSON(filePath, data);
-        setLoadingAddToExistingJsonData(false);
-        setButtonDisabled(false);
-      } catch (error) {
-        console.log(`error with getJSON: ${error.message}`);
+        alert("Data added to existing file");
+      } else {
+        alert("Save Data for first time to add further");
       }
-    } else {
-      alert("Save Data for first time to add further");
+      setLoadingAddToExistingJsonData(false);
+      setButtonDisabled(false);
+    } catch (error) {
+      console.log(`error with getJSON: ${error.message}`);
     }
   };
 
   const handleMySkyRead = async () => {
     // Use setJSON to save the user's information to MySky file
-    const { dataTest } = await mySky.getJSON(filePath);
-    if (dataTest !== null) {
-      try {
-        setButtonDisabled(true);
-        setLoadingPreviewJsonData(true);
+    try {
+      setButtonDisabled(true);
+      setLoadingPreviewJsonData(true);
+      const { data } = await mySky.getJSON(filePath);
+      console.log("dataTest", data);
+      if (data !== null) {
         console.log("filePath", filePath);
-        const { data } = await mySky.getJSON(filePath);
+        // const { data } = await mySky.getJSON(filePath);
         console.log("dataget", data);
         console.log("dataget-type", typeof data);
-        setLoadingPreviewJsonData(false);
-        setButtonDisabled(false);
         setPreviewJsonData(data);
-        alert("Scroll down to preview saved content schema");
-      } catch (error) {
-        console.log(`error with getJSON: ${error.message}`);
+        alert("Scroll down to preview saved data to DataBase");
+      } else {
+        alert("Save Data first to preview");
       }
-    } else {
-      alert("Save Data first to preview");
+      setLoadingPreviewJsonData(false);
+      setButtonDisabled(false);
+    } catch (error) {
+      console.log(`error with getJSON: ${error.message}`);
     }
   };
 
@@ -218,7 +220,6 @@ function CreateContent({ mySky }) {
             >
               {formSchema.map((e, i) => {
                 let key = Object.keys(e)[0];
-                console.log(typeof key);
                 return (
                   <div style={{ margin: "8px" }} key={i}>
                     {getFormElement(key, formSchema[i][key])}

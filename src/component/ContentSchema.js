@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
 //JSONPretty theme
 var JSONPrettyMon = require("react-json-pretty/dist/monikai");
 
-export default function ContentSchema({ mySky }) {
+export default function ContentSchema({ dataDomain, mySky }) {
   const classes = useStyles();
   const [formSchema, setFormSchema] = useState([]);
   const [previewJsonData, setPreviewJsonData] = useState([]);
@@ -26,7 +26,7 @@ export default function ContentSchema({ mySky }) {
   const [loadingPreviewJsonData, setLoadingPreviewJsonData] = useState(false);
   const [loadingSaveJsonData, setLoadingSaveJsonData] = useState(false);
 
-  const filePath = "localhost/formSchema";
+  const filePath = dataDomain + "/" + "formSchema";
   const formElementsButtonList = ["email", "title", "author"];
 
   const resetFormSchema = () => {
@@ -69,13 +69,10 @@ export default function ContentSchema({ mySky }) {
         };
         break;
     }
-    console.log(val);
     setFormSchema([...formSchema, val]);
-    console.log(formSchema);
   };
 
   const getFormElement = (elementName, elementSchema) => {
-    console.log("s", elementName, elementSchema);
     const props = {
       name: elementName,
       label: elementSchema.label,
@@ -101,6 +98,7 @@ export default function ContentSchema({ mySky }) {
       await mySky.setJSON(filePath, jsonData);
       setLoadingSaveJsonData(false);
       setButtonDisabled(false);
+      alert("Content Schema saved");
     } catch (error) {
       console.log(`error with setJSON: ${error.message}`);
     }
@@ -113,19 +111,26 @@ export default function ContentSchema({ mySky }) {
       setLoadingPreviewJsonData(true);
       console.log("filePath", filePath);
       const { data } = await mySky.getJSON(filePath);
-      console.log("dataget", data);
-      console.log("dataget-type", typeof data);
+      // const { data } = await mySky.getJSON(filePath);
+      console.log("dataTest", data);
+      if (data !== null) {
+        console.log("dataget", data);
+        console.log("dataget-type", typeof data);
+
+        setPreviewJsonData(data);
+        alert("Scroll down to preview saved content schema");
+      } else {
+        alert("Save Data first to preview");
+      }
       setLoadingPreviewJsonData(false);
       setButtonDisabled(false);
-      setPreviewJsonData(data);
-      alert("Scroll down to preview saved content schema");
     } catch (error) {
       console.log(`error with getJSON: ${error.message}`);
     }
   };
 
-  console.log("cs-sky", mySky);
-  console.log("ssss", JSON.stringify(formSchema));
+  // console.log("cs-sky", mySky);
+  // console.log("ssss", JSON.stringify(formSchema));
 
   return (
     <div style={{ margin: "2px", textAlign: "center" }}>
@@ -134,8 +139,8 @@ export default function ContentSchema({ mySky }) {
         <h1>Select content elements to create a content Schema</h1>
         <p>
           <strong>
-            <elm>NOTE :</elm> Please Don't select one element more than once as
-            it causes a bug.
+            <strong>NOTE :</strong> Please Don't select one element more than
+            once as it causes a bug.
           </strong>
         </p>
         {formElementsButtonList.map((e, i) => {
@@ -162,7 +167,7 @@ export default function ContentSchema({ mySky }) {
           >
             {formSchema.map((e, i) => {
               let key = Object.keys(e)[0];
-              console.log(typeof key);
+              // console.log(typeof key);
               // console.log(formSchema[key]);
               // return <div>{formSchema[key]}</div>;
               return (

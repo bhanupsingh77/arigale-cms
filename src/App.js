@@ -5,6 +5,9 @@ import { SkynetClient } from "skynet-js";
 import Login from "./component/Login.js";
 import Dashboard from "./component/Dashboard.js";
 
+//dev mode
+const dev = false;
+
 export default function App() {
   const [loggedIn, setLoggedIn] = useState(null);
   const [userID, setUserID] = useState();
@@ -14,20 +17,19 @@ export default function App() {
   // We'll define a portal to allow for developing on localhost.
   // When hosted on a skynet portal, SkynetClient doesn't need any arguments.
   const portal = "https://siasky.net/"; // allow for developing on localhost
-  const client = new SkynetClient(portal);
+  const client = dev ? new SkynetClient(portal) : new SkynetClient();
   const contentRecord = new ContentRecordDAC();
-  const dataDomain = "localhost";
+  const dataDomain = dev ? "localhost" : "arigale.hns";
 
   // call async setup function\
   // On initial run, start initialization of MySky
   useEffect(() => {
     async function initMySky() {
       try {
-        console.log("787999999900");
         // load invisible iframe and define app's data domain
         // needed for permissions write
         const mySky = await client.loadMySky(dataDomain);
-        console.log(mySky);
+        // console.log(mySky);
 
         // load necessary DACs and permissions
         await mySky.loadDacs(contentRecord);
@@ -68,12 +70,15 @@ export default function App() {
     setLoggedIn(false);
     setUserID("");
   };
-  console.log("user-id-a", userID);
-  console.log("mySky", mySky);
+
   return (
     <div className="App">
       {loggedIn ? (
-        <Dashboard handleMySkyLogout={handleMySkyLogout} mySky={mySky} />
+        <Dashboard
+          dataDomain={dataDomain}
+          handleMySkyLogout={handleMySkyLogout}
+          mySky={mySky}
+        />
       ) : (
         <div>
           <Login
