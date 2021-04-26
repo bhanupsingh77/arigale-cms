@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import ContentSchema from "./ContentSchema.js";
-import Test from "./Test.js";
+
+import CreateContent from "./CreateContent.js";
 
 import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
@@ -74,6 +75,8 @@ const useStyles = makeStyles((theme) => ({
   },
   title: {
     flexGrow: 1,
+    fontWeight: "800",
+    letterSpacing: "2px",
   },
   drawerPaper: {
     position: "relative",
@@ -116,9 +119,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Dashboard({ handleMySkyLogout, mySky, userID }) {
+export default function Dashboard({ handleMySkyLogout, mySky }) {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState(0);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -127,8 +131,12 @@ export default function Dashboard({ handleMySkyLogout, mySky, userID }) {
     setOpen(false);
   };
 
+  const handleListItemClick = (index) => {
+    setSelectedIndex(index);
+  };
+
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
-  console.log("userid -d", userID);
+
   return (
     <div className={classes.root}>
       <CssBaseline />
@@ -149,6 +157,15 @@ export default function Dashboard({ handleMySkyLogout, mySky, userID }) {
           >
             <MenuIcon />
           </IconButton>
+          <Typography
+            component="h1"
+            variant="h6"
+            color="inherit"
+            noWrap
+            className={classes.title}
+          >
+            ARIGALE
+          </Typography>
           <Typography
             component="h1"
             variant="h6"
@@ -181,46 +198,40 @@ export default function Dashboard({ handleMySkyLogout, mySky, userID }) {
           </IconButton>
         </div>
         <Divider />
-        {["Content Schema", "Starred", "Send email", "Drafts"].map(
-          (text, index) => (
-            <ListItem button key={text}>
-              <ListItemIcon>
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-              </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItem>
-          )
-        )}
+        {["Content Schema", "Create Content"].map((text, index) => (
+          <ListItem
+            button
+            selected={selectedIndex === index}
+            key={index}
+            onClick={(event) => handleListItemClick(index)}
+          >
+            <ListItemIcon>
+              {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+            </ListItemIcon>
+            <ListItemText primary={text} />
+          </ListItem>
+        ))}
         <Divider />
         {/* <List>{secondaryListItems}</List> */}
       </Drawer>
-      <main className={classes.content} style={{ border: "10px red solid" }}>
+      <main
+        className={classes.content}
+        // style={{ border: "10px red solid" }}
+      >
         <div
           className={classes.appBarSpacer}
-          style={{ border: "10px black solid" }}
+          // style={{ border: "10px black solid" }}
         />
         <Container
           maxWidth="lg"
           className={classes.container}
-          style={{ border: "10px blue solid" }}
+          // style={{ border: "10px blue solid" }}
         >
-          <ContentSchema mySky={mySky} userID={userID} />
-          {/* <Test /> */}
-          <Grid container spacing={3}>
-            {/* Chart */}
-            <Grid item xs={12} md={8} lg={9}>
-              <Paper className={fixedHeightPaper}>{/* <Chart /> */}</Paper>
-            </Grid>
-            {/* Recent Deposits */}
-            <Grid item xs={12} md={4} lg={3}>
-              <Paper className={fixedHeightPaper}>{/* <Deposits /> */}</Paper>
-            </Grid>
-            {/* Recent Orders */}
-            <Grid item xs={12}>
-              <Paper className={classes.paper}>{/* <Orders /> */}</Paper>
-            </Grid>
-          </Grid>
-          <Box pt={4}>{/* <Copyright /> */}</Box>
+          {selectedIndex === 0 ? (
+            <ContentSchema mySky={mySky} />
+          ) : (
+            <CreateContent mySky={mySky} />
+          )}
         </Container>
       </main>
     </div>
