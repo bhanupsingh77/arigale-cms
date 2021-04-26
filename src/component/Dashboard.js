@@ -119,7 +119,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Dashboard({ handleMySkyLogout, mySky }) {
+export default function Dashboard({ dataDomain, handleMySkyLogout, mySky }) {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -228,9 +228,9 @@ export default function Dashboard({ handleMySkyLogout, mySky }) {
           // style={{ border: "10px blue solid" }}
         >
           {selectedIndex === 0 ? (
-            <ContentSchema mySky={mySky} />
+            <ContentSchema dataDomain={dataDomain} mySky={mySky} />
           ) : (
-            <CreateContent mySky={mySky} />
+            <CreateContent dataDomain={dataDomain} mySky={mySky} />
           )}
         </Container>
       </main>
