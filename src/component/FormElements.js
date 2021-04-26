@@ -23,7 +23,7 @@ export function TextField(props) {
   const { name, label, placeholder, ...rest } = props;
   return (
     <>
-      {label && <label for={name}>{label}</label>}
+      {label && <label htmlFor={name}>{`${label}: `}</label>}
       <Field
         className="form-control"
         type="text"
@@ -44,7 +44,7 @@ export function SelectField(props) {
   const { name, label, options } = props;
   return (
     <>
-      {label && <label for={name}>{label}</label>}
+      {label && <label htmlFor={name}>{label}</label>}
       <Field as="select" id={name} name={name}>
         <option value="">Choose...</option>
         {options.map((optn, index) => (
@@ -62,6 +62,7 @@ export function SelectField(props) {
 export function SubmitButton(props) {
   const { title, ...rest } = props;
   const { isSubmitting } = useFormikContext();
+  console.log("imp-????????", isSubmitting);
 
   return (
     <button type="submit" {...rest} disabled={isSubmitting}>

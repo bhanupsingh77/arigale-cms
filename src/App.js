@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { ContentRecordDAC } from "@skynetlabs/content-record-library";
 import { SkynetClient } from "skynet-js";
-import { Button } from "@material-ui/core";
 
+import Login from "./component/Login.js";
 import Dashboard from "./component/Dashboard.js";
 
 export default function App() {
   const [loggedIn, setLoggedIn] = useState(null);
   const [userID, setUserID] = useState();
   const [mySky, setMySky] = useState();
+  const [loadingMySky, setLoadingMySky] = useState(true);
 
   // We'll define a portal to allow for developing on localhost.
   // When hosted on a skynet portal, SkynetClient doesn't need any arguments.
@@ -39,6 +40,7 @@ export default function App() {
         if (loggedIn) {
           setUserID(await mySky.userID());
         }
+        setLoadingMySky(false);
       } catch (e) {
         alert(e);
         console.error(e);
@@ -71,21 +73,14 @@ export default function App() {
   return (
     <div className="App">
       {loggedIn ? (
-        <Dashboard
-          handleMySkyLogout={handleMySkyLogout}
-          mySky={mySky}
-          // userID={userID}
-        />
+        <Dashboard handleMySkyLogout={handleMySkyLogout} mySky={mySky} />
       ) : (
-        <Button
-          id="login-button"
-          variant="contained"
-          color="primary"
-          style={{ border: "1px red solid" }}
-          onClick={handleMySkyLogin}
-        >
-          LOGIN
-        </Button>
+        <div>
+          <Login
+            handleMySkyLogin={handleMySkyLogin}
+            loadingMySky={loadingMySky}
+          />
+        </div>
       )}
     </div>
   );
