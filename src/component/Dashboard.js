@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ContentSchema from "./ContentSchema.js";
 
 import CreateContent from "./CreateContent.js";
@@ -30,11 +30,6 @@ import MenuIcon from "@material-ui/icons/Menu";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import DescriptionIcon from "@material-ui/icons/Description";
 import ViewQuiltIcon from "@material-ui/icons/ViewQuilt";
-
-// import { mainListItems, secondaryListItems } from "./listItems";
-// import Chart from "./Chart";
-// import Deposits from "./Deposits";
-// import Orders from "./Orders";
 
 const drawerWidth = 240;
 
@@ -119,10 +114,55 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Dashboard({ dataDomain, handleMySkyLogout, mySky }) {
+export default function Dashboard({
+  dataDomain,
+  handleMySkyLogout,
+  contentRecord,
+  mySky,
+}) {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [formSchema, setFormSchema] = useState([]);
+  const [formInitialValues, setFormInitialValues] = useState({});
+  const [updatedFormSchema, setupdatedFormSchema] = useState([]);
+
+  // getting formSchema and formInitialValues, value to pass to component CreateContent
+  useEffect(() => {
+    async function initFormSchema() {
+      try {
+        console.log("enterd forminit");
+        const filePath = dataDomain + "/" + "formSchema";
+        console.log("filePath", filePath);
+        const { data } = await mySky.getJSON(filePath);
+        console.log("dataget", data);
+        console.log("dataget-type", typeof data);
+        if (data !== null) {
+          setFormSchema(data);
+          const initFormValue = {};
+          const dataKeys = data.map((obj) => {
+            return Object.keys(obj)[0];
+          });
+          dataKeys.map((key) => {
+            initFormValue[key] = "";
+            return null;
+          });
+          console.log("g", initFormValue);
+          // console.log("data init schema type", dataKeys);
+          setFormInitialValues(initFormValue);
+        }
+        // setLoadinginitFormSchema(false);
+      } catch (error) {
+        console.log(`error with getJSON: ${error.message}`);
+      }
+    }
+
+    initFormSchema();
+  }, [updatedFormSchema]);
+
+  const updateFormSchema = (skylink) => {
+    setupdatedFormSchema(skylink);
+  };
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -228,9 +268,20 @@ export default function Dashboard({ dataDomain, handleMySkyLogout, mySky }) {
           // style={{ border: "10px blue solid" }}
         >
           {selectedIndex === 0 ? (
-            <ContentSchema dataDomain={dataDomain} mySky={mySky} />
+            <ContentSchema
+              dataDomain={dataDomain}
+              contentRecord={contentRecord}
+              mySky={mySky}
+              updateFormSchema={updateFormSchema}
+            />
           ) : (
-            <CreateContent dataDomain={dataDomain} mySky={mySky} />
+            <CreateContent
+              dataDomain={dataDomain}
+              contentRecord={contentRecord}
+              mySky={mySky}
+              formSchema={formSchema}
+              formInitialValues={formInitialValues}
+            />
           )}
         </Container>
       </main>

@@ -38,7 +38,12 @@ const useStyles = makeStyles((theme) => ({
 //JSONPretty theme
 var JSONPrettyMon = require("react-json-pretty/dist/monikai");
 
-export default function ContentSchema({ dataDomain, mySky }) {
+export default function ContentSchema({
+  dataDomain,
+  contentRecord,
+  mySky,
+  updateFormSchema,
+}) {
   const classes = useStyles();
   const [formSchema, setFormSchema] = useState([]);
   const [previewJsonData, setPreviewJsonData] = useState([]);
@@ -158,7 +163,14 @@ export default function ContentSchema({ dataDomain, mySky }) {
     try {
       console.log(jsonData);
       console.log("filePath", filePath);
-      await mySky.setJSON(filePath, jsonData);
+      const { skylink } = await mySky.setJSON(filePath, jsonData);
+      // console.log("content recordes version ?", data);
+      await contentRecord.recordNewContent({
+        skylink,
+        metadata: { contentSchema: "New Content Schema created" },
+      });
+
+      updateFormSchema(skylink);
       alert("Content Schema saved");
     } catch (error) {
       console.log(`error with setJSON: ${error.message}`);

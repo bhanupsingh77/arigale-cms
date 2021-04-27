@@ -8,18 +8,18 @@ import Dashboard from "./component/Dashboard.js";
 //dev mode
 const dev = true;
 
+// We'll define a portal to allow for developing on localhost.
+// When hosted on a skynet portal, SkynetClient doesn't need any arguments.
+const portal = "https://siasky.net/"; // allow for developing on localhost
+const client = dev ? new SkynetClient(portal) : new SkynetClient();
+const contentRecord = new ContentRecordDAC();
+const dataDomain = dev ? "localhost" : "arigale.hns";
+
 export default function App() {
   const [loggedIn, setLoggedIn] = useState(null);
   const [userID, setUserID] = useState();
   const [mySky, setMySky] = useState();
   const [loadingMySky, setLoadingMySky] = useState(true);
-
-  // We'll define a portal to allow for developing on localhost.
-  // When hosted on a skynet portal, SkynetClient doesn't need any arguments.
-  const portal = "https://siasky.net/"; // allow for developing on localhost
-  const client = dev ? new SkynetClient(portal) : new SkynetClient();
-  const contentRecord = new ContentRecordDAC();
-  const dataDomain = dev ? "localhost" : "arigale.hns";
 
   // call async setup function\
   // On initial run, start initialization of MySky
@@ -77,6 +77,7 @@ export default function App() {
         <Dashboard
           dataDomain={dataDomain}
           handleMySkyLogout={handleMySkyLogout}
+          contentRecord={contentRecord}
           mySky={mySky}
         />
       ) : (
