@@ -13,7 +13,7 @@ export function Form(props) {
   console.log("form props", props);
   return (
     <Formik {...props}>
-      <FormikForm className="needs-validation" novalidate="">
+      <FormikForm className="needs-validation" noValidate="">
         {props.children}
       </FormikForm>
     </Formik>
@@ -174,12 +174,11 @@ export function SubmitButton(props) {
 }
 
 export function ResetButton(props) {
-  //   const { title, ...rest } = props;
-  const { handleReset } = useFormikContext();
+  const { title, ...rest } = props;
 
   return (
-    <button type="reset" onClick={handleReset}>
-      Reset
+    <button type="reset" {...rest}>
+      {title}
     </button>
   );
 }

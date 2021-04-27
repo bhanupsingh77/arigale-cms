@@ -65,10 +65,15 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function CreateContent({ dataDomain, mySky }) {
+function CreateContent({
+  dataDomain,
+  contentRecord,
+  mySky,
+  formSchema,
+  formInitialValues,
+}) {
   const classes = useStyles();
-  const [formSchema, setFormSchema] = useState([]);
-  const [formInitialValues, setFormInitialValues] = useState({});
+  const [loadinginitFormSchema, setLoadinginitFormSchema] = useState(false);
   const [formData, setFormData] = useState([]);
   const [previewJsonData, setPreviewJsonData] = useState([]);
   const [buttonDisabled, setButtonDisabled] = useState(false);
@@ -78,43 +83,11 @@ function CreateContent({ dataDomain, mySky }) {
     loadingAddToExistingJsonData,
     setLoadingAddToExistingJsonData,
   ] = useState(false);
-  const [loadinginitFormSchema, setLoadinginitFormSchema] = useState(true);
   const [skyLink, setSkyLink] = useState(null);
   const [loadingSkyLink, setLoadingSkyLink] = useState(false);
 
   //file path for CreateContent
   const filePath = dataDomain + "/" + "blogContent";
-
-  useEffect(() => {
-    async function initFormSchema() {
-      try {
-        const filePath = dataDomain + "/" + "formSchema";
-        console.log("filePath", filePath);
-        const { data } = await mySky.getJSON(filePath);
-        console.log("dataget", data);
-        console.log("dataget-type", typeof data);
-        if (data !== null) {
-          setFormSchema(data);
-          const initFormValue = {};
-          const dataKeys = data.map((obj) => {
-            return Object.keys(obj)[0];
-          });
-          dataKeys.map((key) => {
-            initFormValue[key] = "";
-            return null;
-          });
-          console.log("g", initFormValue);
-          // console.log("data init schema type", dataKeys);
-          setFormInitialValues(initFormValue);
-        }
-        setLoadinginitFormSchema(false);
-      } catch (error) {
-        console.log(`error with getJSON: ${error.message}`);
-      }
-    }
-
-    initFormSchema();
-  }, []);
 
   //   const [validationSchema, setValidationSchema] = useState({});
 
@@ -192,7 +165,11 @@ function CreateContent({ dataDomain, mySky }) {
       setLoadingSaveJsonData(true);
       console.log(jsonData);
       console.log("filePath", filePath);
-      await mySky.setJSON(filePath, jsonData);
+      const { skylink } = await mySky.setJSON(filePath, jsonData);
+      await contentRecord.recordInteraction({
+        skylink,
+        metadata: { content: "created" },
+      });
       setLoadingSaveJsonData(false);
       setButtonDisabled(false);
       alert("Data saved");
@@ -211,7 +188,11 @@ function CreateContent({ dataDomain, mySky }) {
         console.log("filePath", filePath);
         // const { data } = await mySky.getJSON(filePath);
         data.push(jsonData[0]);
-        await mySky.setJSON(filePath, data);
+        const { skylink } = await mySky.setJSON(filePath, data);
+        await contentRecord.recordInteraction({
+          skylink,
+          metadata: { content: "updated" },
+        });
         alert("Data added to existing file");
       } else {
         alert("Save Data for first time to add further");
@@ -306,17 +287,7 @@ function CreateContent({ dataDomain, mySky }) {
                   );
                 })}
                 <SubmitButton className={classes.button} title="Submit" />
-                {/* <ResetButton />
-                 */}
-                <button className={classes.button} type="reset">
-                  Reset
-                </button>
-                {/* <button onClick={handleReset}>reset</button> */}
-
-                {/* <ResetButton className={classes.button} title="Reset" /> */}
-                {/* <button className={classes.button} type="reset">
-              Reset
-            </button> */}
+                <ResetButton className={classes.button} title="Reset" />
               </div>
             </Form>
           </div>
