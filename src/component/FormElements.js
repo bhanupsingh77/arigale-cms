@@ -10,6 +10,7 @@ import {
 } from "formik";
 
 export function Form(props) {
+  console.log("form props", props);
   return (
     <Formik {...props}>
       <FormikForm className="needs-validation" novalidate="">
@@ -19,14 +20,104 @@ export function Form(props) {
   );
 }
 
+export function CustomField(props) {
+  const { name, type, label, placeholder, ...rest } = props;
+  return (
+    <>
+      {label && (
+        <label
+          style={{
+            color: "black",
+            fontWeight: "800",
+            fontSize: "22px",
+            alignSelf: "center",
+          }}
+          htmlFor={name}
+        >{`${label} `}</label>
+      )}
+      <Field
+        className="form-control"
+        type={type}
+        style={{
+          border: "2px solid #000",
+          padding: "10px",
+          width: "80%",
+        }}
+        name={name}
+        id={name}
+        placeholder={placeholder || ""}
+        {...rest}
+      />
+      <ErrorMessage
+        name={name}
+        render={(msg) => <div style={{ color: "red" }}>{msg}</div>}
+      />
+    </>
+  );
+}
+
 export function TextField(props) {
   const { name, label, placeholder, ...rest } = props;
   return (
     <>
-      {label && <label htmlFor={name}>{`${label}: `}</label>}
+      {label && (
+        <label
+          style={{
+            color: "black",
+            fontWeight: "800",
+            fontSize: "22px",
+            alignSelf: "center",
+          }}
+          htmlFor={name}
+        >{`${label} `}</label>
+      )}
       <Field
         className="form-control"
         type="text"
+        style={{
+          border: "2px solid #000",
+          padding: "10px",
+          width: "80%",
+        }}
+        name={name}
+        id={name}
+        placeholder={placeholder || ""}
+        {...rest}
+      />
+      <ErrorMessage
+        name={name}
+        render={(msg) => <div style={{ color: "red" }}>{msg}</div>}
+      />
+    </>
+  );
+}
+
+export function TextArea(props) {
+  const { name, label, placeholder, ...rest } = props;
+  return (
+    <>
+      {label && (
+        <label
+          style={{
+            color: "black",
+            fontWeight: "800",
+            fontSize: "22px",
+            alignSelf: "center",
+          }}
+          htmlFor={name}
+        >{`${label} `}</label>
+      )}
+      <br />
+      <Field
+        rows={15}
+        // cols={80}
+        style={{
+          border: "2px solid #000",
+          padding: "10px",
+          width: "80%",
+        }}
+        className="form-control"
+        as="textarea"
         name={name}
         id={name}
         placeholder={placeholder || ""}
@@ -44,7 +135,19 @@ export function SelectField(props) {
   const { name, label, options } = props;
   return (
     <>
-      {label && <label htmlFor={name}>{label}</label>}
+      {label && (
+        <label
+          style={{
+            color: "black",
+            fontWeight: "800",
+            fontSize: "22px",
+            alignSelf: "center",
+          }}
+          htmlFor={name}
+        >
+          {label}
+        </label>
+      )}
       <Field as="select" id={name} name={name}>
         <option value="">Choose...</option>
         {options.map((optn, index) => (
@@ -66,6 +169,17 @@ export function SubmitButton(props) {
   return (
     <button type="submit" {...rest} disabled={isSubmitting}>
       {title}
+    </button>
+  );
+}
+
+export function ResetButton(props) {
+  //   const { title, ...rest } = props;
+  const { handleReset } = useFormikContext();
+
+  return (
+    <button type="reset" onClick={handleReset}>
+      Reset
     </button>
   );
 }

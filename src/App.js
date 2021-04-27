@@ -6,7 +6,7 @@ import Login from "./component/Login.js";
 import Dashboard from "./component/Dashboard.js";
 
 //dev mode
-const dev = false;
+const dev = true;
 
 export default function App() {
   const [loggedIn, setLoggedIn] = useState(null);

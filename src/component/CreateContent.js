@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Form, TextField, SelectField, SubmitButton } from "./FormElements";
+import {
+  Form,
+  CustomField,
+  TextField,
+  TextArea,
+  SelectField,
+  SubmitButton,
+  ResetButton,
+} from "./FormElements";
 import { makeStyles } from "@material-ui/core/styles";
 import { Backdrop, Button, CircularProgress } from "@material-ui/core";
 import JSONPretty from "react-json-pretty";
@@ -42,11 +50,25 @@ const useStyles = makeStyles((theme) => ({
     cursor: "pointer",
     textTransform: "uppercase",
   },
+  currentSchemaFormContainer: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+  },
+  currentSchemaElementContainer: {
+    width: "80%",
+    marginBottom: "20px",
+    paddingLeft: "10px",
+    border: "3px solid lavenderblush",
+    display: "flex",
+    justifyContent: "space-between",
+  },
 }));
 
 function CreateContent({ dataDomain, mySky }) {
   const classes = useStyles();
   const [formSchema, setFormSchema] = useState([]);
+  const [formInitialValues, setFormInitialValues] = useState({});
   const [formData, setFormData] = useState([]);
   const [previewJsonData, setPreviewJsonData] = useState([]);
   const [buttonDisabled, setButtonDisabled] = useState(false);
@@ -57,6 +79,10 @@ function CreateContent({ dataDomain, mySky }) {
     setLoadingAddToExistingJsonData,
   ] = useState(false);
   const [loadinginitFormSchema, setLoadinginitFormSchema] = useState(true);
+  const [skyLink, setSkyLink] = useState(null);
+  const [loadingSkyLink, setLoadingSkyLink] = useState(false);
+
+  //file path for CreateContent
   const filePath = dataDomain + "/" + "blogContent";
 
   useEffect(() => {
@@ -69,6 +95,17 @@ function CreateContent({ dataDomain, mySky }) {
         console.log("dataget-type", typeof data);
         if (data !== null) {
           setFormSchema(data);
+          const initFormValue = {};
+          const dataKeys = data.map((obj) => {
+            return Object.keys(obj)[0];
+          });
+          dataKeys.map((key) => {
+            initFormValue[key] = "";
+            return null;
+          });
+          console.log("g", initFormValue);
+          // console.log("data init schema type", dataKeys);
+          setFormInitialValues(initFormValue);
         }
         setLoadinginitFormSchema(false);
       } catch (error) {
@@ -114,9 +151,18 @@ function CreateContent({ dataDomain, mySky }) {
   const getFormElement = (elementName, elementSchema) => {
     const props = {
       name: elementName,
+      type: elementSchema.type,
       label: elementSchema.label,
       options: elementSchema.options,
     };
+
+    if (elementSchema.type === "date" || elementSchema.type === "url") {
+      return <CustomField {...props} />;
+    }
+
+    if (elementSchema.type === "textarea") {
+      return <TextArea {...props} />;
+    }
 
     if (elementSchema.type === "text" || elementSchema.type === "email") {
       return <TextField {...props} />;
@@ -132,7 +178,7 @@ function CreateContent({ dataDomain, mySky }) {
     val.push(values);
     setFormData(val);
     setSubmitting(false);
-    // resetForm();
+    // resetForm({ title: "" });
   };
 
   // const onReset = ({ resetForm }) => {
@@ -201,6 +247,35 @@ function CreateContent({ dataDomain, mySky }) {
     }
   };
 
+  const handleMySkySkyLink = async () => {
+    try {
+      setButtonDisabled(true);
+      setLoadingSkyLink(true);
+      const { skylink } = await mySky.getJSON(filePath);
+      console.log("dataTest", skylink);
+      if (skylink !== null) {
+        console.log("filePath", filePath);
+        // const { skylink } = await mySky.getJSON(filePath);
+        console.log("dataget", skylink);
+        console.log("dataget-type", typeof skylink);
+        setSkyLink(skylink);
+        alert("Scroll down to preview skylink");
+      } else {
+        alert("Save Data first to preview skylink");
+      }
+      setLoadingSkyLink(false);
+      setButtonDisabled(false);
+    } catch (error) {
+      console.log(`error with getJSON: ${error.message}`);
+    }
+  };
+
+  const copyFileLink = async () => {
+    // console.log("l2", document.getElementById("fileLink").innerText);
+    const text = document.getElementById("skylink-blog").innerText;
+    await navigator.clipboard.writeText(text);
+  };
+
   return (
     <div>
       {loadinginitFormSchema ? (
@@ -214,23 +289,35 @@ function CreateContent({ dataDomain, mySky }) {
             <h1>Input data and Submit to preview Data</h1>
             <Form
               // enableReinitialize
-              initialValues={{}}
+              initialValues={formInitialValues}
               // validationSchema={validationSchema}
               onSubmit={onSubmit}
             >
-              {formSchema.map((e, i) => {
-                let key = Object.keys(e)[0];
-                return (
-                  <div style={{ margin: "8px" }} key={i}>
-                    {getFormElement(key, formSchema[i][key])}
-                  </div>
-                );
-              })}
-              <SubmitButton className={classes.button} title="Submit" />
-              {/* <ResetButton className={classes.button} title="Reset" /> */}
-              {/* <button className={classes.button} type="reset">
+              <div className={classes.currentSchemaFormContainer}>
+                {formSchema.map((e, i) => {
+                  let key = Object.keys(e)[0];
+                  return (
+                    <div
+                      className={classes.currentSchemaElementContainer}
+                      key={i}
+                    >
+                      {getFormElement(key, formSchema[i][key])}
+                    </div>
+                  );
+                })}
+                <SubmitButton className={classes.button} title="Submit" />
+                {/* <ResetButton />
+                 */}
+                <button className={classes.button} type="reset">
+                  Reset
+                </button>
+                {/* <button onClick={handleReset}>reset</button> */}
+
+                {/* <ResetButton className={classes.button} title="Reset" /> */}
+                {/* <button className={classes.button} type="reset">
               Reset
             </button> */}
+              </div>
             </Form>
           </div>
           {formData.length >= 1 ? (
@@ -286,6 +373,38 @@ function CreateContent({ dataDomain, mySky }) {
                 onClick={() => handleMySkyRead()}
               >
                 preview
+              </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                style={{ border: "1px red solid", margin: "8px" }}
+                disabled={buttonDisabled ? true : false}
+                startIcon={
+                  loadingSkyLink ? <CircularProgress size={20} /> : null
+                }
+                onClick={handleMySkySkyLink}
+              >
+                Get skylink
+              </Button>
+            </div>
+          ) : null}
+          {skyLink !== null ? (
+            <div className={classes.container}>
+              <h1>SkyLink</h1>
+              <a
+                id="skylink-blog"
+                href={`https://siasky.net/${skyLink}`}
+                target="blank"
+              >{`https://siasky.net/${skyLink}`}</a>
+              <br />
+              {/* <h1>{`skylink: ${skyLink}`}</h1> */}
+              <Button
+                variant="contained"
+                color="primary"
+                style={{ border: "1px red solid", margin: "8px" }}
+                onClick={copyFileLink}
+              >
+                Copy SkyLink
               </Button>
             </div>
           ) : null}

@@ -1,17 +1,37 @@
 import React, { useState } from "react";
-import { Form, TextField, SelectField, SubmitButton } from "./FormElements";
+import {
+  Form,
+  CustomField,
+  TextField,
+  TextArea,
+  SelectField,
+  SubmitButton,
+} from "./FormElements";
 
 import { Button, CircularProgress } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import JSONPretty from "react-json-pretty";
 
 const useStyles = makeStyles((theme) => ({
-  formContainer: {
+  container: {
     border: "4px black solid",
     margin: "5px",
     marginTop: "30px",
     padding: "20px",
     textAlign: "center",
+  },
+  currentSchemaFormContainer: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+  },
+  currentSchemaElementContainer: {
+    width: "80%",
+    marginBottom: "20px",
+    paddingLeft: "10px",
+    border: "3px solid lavenderblush",
+    display: "flex",
+    justifyContent: "space-between",
   },
 }));
 
@@ -27,7 +47,14 @@ export default function ContentSchema({ dataDomain, mySky }) {
   const [loadingSaveJsonData, setLoadingSaveJsonData] = useState(false);
 
   const filePath = dataDomain + "/" + "formSchema";
-  const formElementsButtonList = ["email", "title", "author"];
+  const formElementsButtonList = [
+    "email",
+    "title",
+    "author",
+    "textarea",
+    "date",
+    "imageLink",
+  ];
 
   const resetFormSchema = () => {
     // setLoadingSaveJsonData(false);
@@ -46,6 +73,33 @@ export default function ContentSchema({ dataDomain, mySky }) {
           email: {
             type: "email",
             label: "Email",
+            required: true,
+          },
+        };
+        break;
+      case "imageLink":
+        val = {
+          imageLink: {
+            type: "url",
+            label: "ImageLink",
+            required: true,
+          },
+        };
+        break;
+      case "date":
+        val = {
+          date: {
+            type: "date",
+            label: "Date",
+            required: true,
+          },
+        };
+        break;
+      case "textarea":
+        val = {
+          textarea: {
+            type: "textarea",
+            label: "TextArea",
             required: true,
           },
         };
@@ -75,9 +129,18 @@ export default function ContentSchema({ dataDomain, mySky }) {
   const getFormElement = (elementName, elementSchema) => {
     const props = {
       name: elementName,
+      type: elementSchema.type,
       label: elementSchema.label,
       options: elementSchema.options,
     };
+
+    if (elementSchema.type === "date" || elementSchema.type === "url") {
+      return <CustomField {...props} />;
+    }
+
+    if (elementSchema.type === "textarea") {
+      return <TextArea {...props} />;
+    }
 
     if (elementSchema.type === "text" || elementSchema.type === "email") {
       return <TextField {...props} />;
@@ -90,18 +153,18 @@ export default function ContentSchema({ dataDomain, mySky }) {
 
   const handleMySkyWrite = async (jsonData) => {
     // Use setJSON to save the user's information to MySky file
+    setButtonDisabled(true);
+    setLoadingSaveJsonData(true);
     try {
-      setButtonDisabled(true);
-      setLoadingSaveJsonData(true);
       console.log(jsonData);
       console.log("filePath", filePath);
       await mySky.setJSON(filePath, jsonData);
-      setLoadingSaveJsonData(false);
-      setButtonDisabled(false);
       alert("Content Schema saved");
     } catch (error) {
       console.log(`error with setJSON: ${error.message}`);
     }
+    setLoadingSaveJsonData(false);
+    setButtonDisabled(false);
   };
 
   const handleMySkyRead = async (jsonData) => {
@@ -134,7 +197,7 @@ export default function ContentSchema({ dataDomain, mySky }) {
 
   return (
     <div style={{ margin: "2px", textAlign: "center" }}>
-      <div className={classes.formContainer}>
+      <div className={classes.container}>
         <h1 style={{ textAlign: "center" }}>Content Schema</h1>
         <h1>Select content elements to create a content Schema</h1>
         <p>
@@ -158,24 +221,29 @@ export default function ContentSchema({ dataDomain, mySky }) {
         })}
       </div>
       {formSchema.length >= 1 ? (
-        <div className={classes.formContainer}>
+        <div className={classes.container}>
           <h1>Current Content Schema</h1>
           <Form
             // enableReinitialize
             initialValues={{}}
             // onSubmit={onSubmit}
           >
-            {formSchema.map((e, i) => {
-              let key = Object.keys(e)[0];
-              // console.log(typeof key);
-              // console.log(formSchema[key]);
-              // return <div>{formSchema[key]}</div>;
-              return (
-                <div style={{ margin: "8px" }} key={i}>
-                  {getFormElement(key, formSchema[i][key])}
-                </div>
-              );
-            })}
+            <div className={classes.currentSchemaFormContainer}>
+              {formSchema.map((e, i) => {
+                let key = Object.keys(e)[0];
+                // console.log(typeof key);
+                // console.log(formSchema[key]);
+                // return <div>{formSchema[key]}</div>;
+                return (
+                  <div
+                    className={classes.currentSchemaElementContainer}
+                    key={i}
+                  >
+                    {getFormElement(key, formSchema[i][key])}
+                  </div>
+                );
+              })}
+            </div>
             {/* <SubmitButton title="Submit" /> */}
             {/* <input type="submit" /> */}
           </Form>
@@ -215,7 +283,7 @@ export default function ContentSchema({ dataDomain, mySky }) {
         </div>
       ) : null}
       {previewJsonData.length >= 1 ? (
-        <div className={classes.formContainer}>
+        <div className={classes.container}>
           <h1>Saved Content Schema Preview</h1>
           <JSONPretty
             id="json-pretty-PreviewJsonData"
