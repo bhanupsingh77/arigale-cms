@@ -28,8 +28,8 @@ import {
 
 import MenuIcon from "@material-ui/icons/Menu";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
-import InboxIcon from "@material-ui/icons/Inbox";
-import MailIcon from "@material-ui/icons/Mail";
+import DescriptionIcon from "@material-ui/icons/Description";
+import ViewQuiltIcon from "@material-ui/icons/ViewQuilt";
 
 // import { mainListItems, secondaryListItems } from "./listItems";
 // import Chart from "./Chart";
@@ -206,7 +206,7 @@ export default function Dashboard({ dataDomain, handleMySkyLogout, mySky }) {
             onClick={(event) => handleListItemClick(index)}
           >
             <ListItemIcon>
-              {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+              {index % 2 === 0 ? <ViewQuiltIcon /> : <DescriptionIcon />}
             </ListItemIcon>
             <ListItemText primary={text} />
           </ListItem>
