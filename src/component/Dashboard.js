@@ -131,12 +131,12 @@ export default function Dashboard({
   useEffect(() => {
     async function initFormSchema() {
       try {
-        console.log("enterd forminit");
+        // console.log("enterd forminit");
         const filePath = dataDomain + "/" + "formSchema";
-        console.log("filePath", filePath);
+        // console.log("filePath", filePath);
         const { data } = await mySky.getJSON(filePath);
-        console.log("dataget", data);
-        console.log("dataget-type", typeof data);
+        // console.log("dataget", data);
+        // console.log("dataget-type", typeof data);
         if (data !== null) {
           setFormSchema(data);
           const initFormValue = {};
@@ -147,7 +147,7 @@ export default function Dashboard({
             initFormValue[key] = "";
             return null;
           });
-          console.log("g", initFormValue);
+          // console.log("g", initFormValue);
           // console.log("data init schema type", dataKeys);
           setFormInitialValues(initFormValue);
         }
@@ -214,6 +214,17 @@ export default function Dashboard({
             className={classes.title}
           >
             Dashboard
+          </Typography>
+          <Typography>
+            <Link
+              href="https://discord.gg/48E6esMuZZ"
+              target="_blank"
+              rel="noopener"
+              color="secondary"
+              style={{ marginRight: "15px" }}
+            >
+              JOIN DISCORD
+            </Link>
           </Typography>
           <Button
             variant="contained"

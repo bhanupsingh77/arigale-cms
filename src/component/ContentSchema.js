@@ -59,6 +59,7 @@ export default function ContentSchema({
     "textarea",
     "date",
     "imageLink",
+    "slug",
   ];
 
   const resetFormSchema = () => {
@@ -78,6 +79,15 @@ export default function ContentSchema({
           email: {
             type: "email",
             label: "Email",
+            required: true,
+          },
+        };
+        break;
+      case "slug":
+        val = {
+          slug: {
+            type: "text",
+            label: "Slug",
             required: true,
           },
         };
@@ -161,8 +171,8 @@ export default function ContentSchema({
     setButtonDisabled(true);
     setLoadingSaveJsonData(true);
     try {
-      console.log(jsonData);
-      console.log("filePath", filePath);
+      // console.log(jsonData);
+      // console.log("filePath", filePath);
       const { skylink } = await mySky.setJSON(filePath, jsonData);
       // console.log("content recordes version ?", data);
       await contentRecord.recordNewContent({
@@ -184,13 +194,13 @@ export default function ContentSchema({
     try {
       setButtonDisabled(true);
       setLoadingPreviewJsonData(true);
-      console.log("filePath", filePath);
+      // console.log("filePath", filePath);
       const { data } = await mySky.getJSON(filePath);
       // const { data } = await mySky.getJSON(filePath);
-      console.log("dataTest", data);
+      // console.log("dataTest", data);
       if (data !== null) {
-        console.log("dataget", data);
-        console.log("dataget-type", typeof data);
+        // console.log("dataget", data);
+        // console.log("dataget-type", typeof data);
 
         setPreviewJsonData(data);
         alert("Scroll down to preview saved content schema");

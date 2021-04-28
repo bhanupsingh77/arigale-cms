@@ -10,7 +10,6 @@ import {
 } from "formik";
 
 export function Form(props) {
-  console.log("form props", props);
   return (
     <Formik {...props}>
       <FormikForm className="needs-validation" noValidate="">

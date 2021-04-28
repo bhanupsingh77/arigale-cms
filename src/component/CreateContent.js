@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Form,
   CustomField,
@@ -163,8 +163,8 @@ function CreateContent({
     try {
       setButtonDisabled(true);
       setLoadingSaveJsonData(true);
-      console.log(jsonData);
-      console.log("filePath", filePath);
+      // console.log(jsonData);
+      // console.log("filePath", filePath);
       const { skylink } = await mySky.setJSON(filePath, jsonData);
       await contentRecord.recordInteraction({
         skylink,
@@ -185,7 +185,7 @@ function CreateContent({
       const { data } = await mySky.getJSON(filePath);
       if (data !== null) {
         let val = [];
-        console.log("filePath", filePath);
+        // console.log("filePath", filePath);
         // const { data } = await mySky.getJSON(filePath);
         data.push(jsonData[0]);
         const { skylink } = await mySky.setJSON(filePath, data);
@@ -210,12 +210,12 @@ function CreateContent({
       setButtonDisabled(true);
       setLoadingPreviewJsonData(true);
       const { data } = await mySky.getJSON(filePath);
-      console.log("dataTest", data);
+      // console.log("dataTest", data);
       if (data !== null) {
-        console.log("filePath", filePath);
+        // console.log("filePath", filePath);
         // const { data } = await mySky.getJSON(filePath);
-        console.log("dataget", data);
-        console.log("dataget-type", typeof data);
+        // console.log("dataget", data);
+        // console.log("dataget-type", typeof data);
         setPreviewJsonData(data);
         alert("Scroll down to preview saved data to DataBase");
       } else {
@@ -233,12 +233,12 @@ function CreateContent({
       setButtonDisabled(true);
       setLoadingSkyLink(true);
       const { skylink } = await mySky.getJSON(filePath);
-      console.log("dataTest", skylink);
+      // console.log("dataTest", skylink);
       if (skylink !== null) {
-        console.log("filePath", filePath);
+        // console.log("filePath", filePath);
         // const { skylink } = await mySky.getJSON(filePath);
-        console.log("dataget", skylink);
-        console.log("dataget-type", typeof skylink);
+        // console.log("dataget", skylink);
+        // console.log("dataget-type", typeof skylink);
         setSkyLink(skylink);
         alert("Scroll down to preview skylink");
       } else {
