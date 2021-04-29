@@ -1,13 +1,6 @@
 import React, { useState } from "react";
-import {
-  Form,
-  CustomField,
-  TextField,
-  TextArea,
-  SelectField,
-  SubmitButton,
-} from "./FormElements";
-
+import { Form } from "./FormElements";
+import { getFormElement } from "../utils.js";
 import { Button, CircularProgress } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import JSONPretty from "react-json-pretty";
@@ -50,6 +43,9 @@ export default function ContentSchema({
   const [buttonDisabled, setButtonDisabled] = useState(false);
   const [loadingPreviewJsonData, setLoadingPreviewJsonData] = useState(false);
   const [loadingSaveJsonData, setLoadingSaveJsonData] = useState(false);
+  const [currentFormSchemaElements, setCurrentFormSchemaElements] = useState(
+    []
+  );
 
   const filePath = dataDomain + "/" + "formSchema";
   const formElementsButtonList = [
@@ -67,16 +63,28 @@ export default function ContentSchema({
     setButtonDisabled(true);
     setFormSchema([]);
     setPreviewJsonData([]);
+    setCurrentFormSchemaElements([]);
     // setLoadingSaveJsonData(false);
     setButtonDisabled(false);
   };
 
-  const addElementToFormSchema = (element) => {
+  const addElementToFormSchema = async (element) => {
+    const result = await currentFormSchemaElements.filter(
+      (formElement) => formElement === element
+    );
+    const id = await String(result.length + 1);
+    const updatedcurrentFormSchemaElements = [
+      ...currentFormSchemaElements,
+      element,
+    ];
+    setCurrentFormSchemaElements(updatedcurrentFormSchemaElements);
     let val;
+
     switch (element) {
       case "email":
         val = {
           email: {
+            id: `${element}-${id}`,
             type: "email",
             label: "Email",
             required: true,
@@ -86,6 +94,7 @@ export default function ContentSchema({
       case "slug":
         val = {
           slug: {
+            id: `${element}-${id}`,
             type: "text",
             label: "Slug",
             required: true,
@@ -95,6 +104,7 @@ export default function ContentSchema({
       case "imageLink":
         val = {
           imageLink: {
+            id: `${element}-${id}`,
             type: "url",
             label: "ImageLink",
             required: true,
@@ -104,6 +114,7 @@ export default function ContentSchema({
       case "date":
         val = {
           date: {
+            id: `${element}-${id}`,
             type: "date",
             label: "Date",
             required: true,
@@ -113,6 +124,7 @@ export default function ContentSchema({
       case "textarea":
         val = {
           textarea: {
+            id: `${element}-${id}`,
             type: "textarea",
             label: "TextArea",
             required: true,
@@ -122,6 +134,7 @@ export default function ContentSchema({
       case "title":
         val = {
           title: {
+            id: `${element}-${id}`,
             type: "text",
             label: "Title",
             required: true,
@@ -131,6 +144,7 @@ export default function ContentSchema({
       case "author":
         val = {
           author: {
+            id: `${element}-${id}`,
             type: "text",
             label: "Author",
             required: true,
@@ -138,32 +152,8 @@ export default function ContentSchema({
         };
         break;
     }
+    // console.log("val", val);
     setFormSchema([...formSchema, val]);
-  };
-
-  const getFormElement = (elementName, elementSchema) => {
-    const props = {
-      name: elementName,
-      type: elementSchema.type,
-      label: elementSchema.label,
-      options: elementSchema.options,
-    };
-
-    if (elementSchema.type === "date" || elementSchema.type === "url") {
-      return <CustomField {...props} />;
-    }
-
-    if (elementSchema.type === "textarea") {
-      return <TextArea {...props} />;
-    }
-
-    if (elementSchema.type === "text" || elementSchema.type === "email") {
-      return <TextField {...props} />;
-    }
-
-    if (elementSchema.type === "select") {
-      return <SelectField {...props} />;
-    }
   };
 
   const handleMySkyWrite = async (jsonData) => {
@@ -173,14 +163,14 @@ export default function ContentSchema({
     try {
       // console.log(jsonData);
       // console.log("filePath", filePath);
-      const { skylink } = await mySky.setJSON(filePath, jsonData);
+      const { dataLink } = await mySky.setJSON(filePath, jsonData);
       // console.log("content recordes version ?", data);
       await contentRecord.recordNewContent({
-        skylink,
+        skylink: dataLink,
         metadata: { contentSchema: "New Content Schema created" },
       });
 
-      updateFormSchema(skylink);
+      updateFormSchema(dataLink);
       alert("Content Schema saved");
     } catch (error) {
       console.log(`error with setJSON: ${error.message}`);
@@ -222,22 +212,22 @@ export default function ContentSchema({
       <div className={classes.container}>
         <h1 style={{ textAlign: "center" }}>Content Schema</h1>
         <h1>Select content elements to create a content Schema</h1>
-        <p>
+        {/* <p>
           <strong>
             <strong>NOTE :</strong> Please Don't select one element more than
             once as it causes a bug.
           </strong>
-        </p>
-        {formElementsButtonList.map((e, i) => {
+        </p> */}
+        {formElementsButtonList.map((element, i) => {
           return (
             <Button
               key={i}
               variant="contained"
               color="primary"
               style={{ border: "1px black solid", margin: "5px" }}
-              onClick={() => addElementToFormSchema(e)}
+              onClick={() => addElementToFormSchema(element)}
             >
-              {`Add ${e}`}
+              {`Add ${element}`}
             </Button>
           );
         })}

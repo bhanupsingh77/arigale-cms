@@ -19,8 +19,9 @@ export function Form(props) {
   );
 }
 
+// for form input element's
 export function CustomField(props) {
-  const { name, type, label, placeholder, ...rest } = props;
+  const { name, id, type, label, placeholder, ...rest } = props;
   return (
     <>
       {label && (
@@ -43,43 +44,7 @@ export function CustomField(props) {
           width: "80%",
         }}
         name={name}
-        id={name}
-        placeholder={placeholder || ""}
-        {...rest}
-      />
-      <ErrorMessage
-        name={name}
-        render={(msg) => <div style={{ color: "red" }}>{msg}</div>}
-      />
-    </>
-  );
-}
-
-export function TextField(props) {
-  const { name, label, placeholder, ...rest } = props;
-  return (
-    <>
-      {label && (
-        <label
-          style={{
-            color: "black",
-            fontWeight: "800",
-            fontSize: "22px",
-            alignSelf: "center",
-          }}
-          htmlFor={name}
-        >{`${label} `}</label>
-      )}
-      <Field
-        className="form-control"
-        type="text"
-        style={{
-          border: "2px solid #000",
-          padding: "10px",
-          width: "80%",
-        }}
-        name={name}
-        id={name}
+        id={id}
         placeholder={placeholder || ""}
         {...rest}
       />
@@ -92,7 +57,7 @@ export function TextField(props) {
 }
 
 export function TextArea(props) {
-  const { name, label, placeholder, ...rest } = props;
+  const { name, id, label, placeholder, ...rest } = props;
   return (
     <>
       {label && (
@@ -118,7 +83,7 @@ export function TextArea(props) {
         className="form-control"
         as="textarea"
         name={name}
-        id={name}
+        id={id}
         placeholder={placeholder || ""}
         {...rest}
       />
@@ -131,7 +96,7 @@ export function TextArea(props) {
 }
 
 export function SelectField(props) {
-  const { name, label, options } = props;
+  const { name, id, label, options } = props;
   return (
     <>
       {label && (
@@ -147,7 +112,7 @@ export function SelectField(props) {
           {label}
         </label>
       )}
-      <Field as="select" id={name} name={name}>
+      <Field as="select" id={id} name={name}>
         <option value="">Choose...</option>
         {options.map((optn, index) => (
           <option value={optn.value} label={optn.label || optn.value} />

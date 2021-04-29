@@ -143,11 +143,14 @@ export default function Dashboard({
           const dataKeys = data.map((obj) => {
             return Object.keys(obj)[0];
           });
-          dataKeys.map((key) => {
-            initFormValue[key] = "";
+          // console.log("datakeys init", dataKeys);
+          dataKeys.map((key, i) => {
+            const formKey = data[i][key]["id"];
+            // console.log("formkey", formKey);
+            initFormValue[formKey] = "";
             return null;
           });
-          // console.log("g", initFormValue);
+          // console.log("new datakeys init val", initFormValue);
           // console.log("data init schema type", dataKeys);
           setFormInitialValues(initFormValue);
         }
@@ -160,8 +163,8 @@ export default function Dashboard({
     initFormSchema();
   }, [updatedFormSchema]);
 
-  const updateFormSchema = (skylink) => {
-    setupdatedFormSchema(skylink);
+  const updateFormSchema = (dataLink) => {
+    setupdatedFormSchema(dataLink);
   };
 
   const handleDrawerOpen = () => {
