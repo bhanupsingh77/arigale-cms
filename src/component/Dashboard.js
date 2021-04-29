@@ -8,17 +8,12 @@ import { makeStyles } from "@material-ui/core/styles";
 import {
   CssBaseline,
   Drawer,
-  Box,
   AppBar,
   Toolbar,
-  List,
   Typography,
   Divider,
   IconButton,
-  Badge,
   Container,
-  Grid,
-  Paper,
   Link,
   ListItem,
   ListItemIcon,
@@ -128,40 +123,43 @@ export default function Dashboard({
   const [updatedFormSchema, setupdatedFormSchema] = useState([]);
 
   // getting formSchema and formInitialValues, value to pass to component CreateContent
-  useEffect(() => {
-    async function initFormSchema() {
-      try {
-        // console.log("enterd forminit");
-        const filePath = dataDomain + "/" + "formSchema";
-        // console.log("filePath", filePath);
-        const { data } = await mySky.getJSON(filePath);
-        // console.log("dataget", data);
-        // console.log("dataget-type", typeof data);
-        if (data !== null) {
-          setFormSchema(data);
-          const initFormValue = {};
-          const dataKeys = data.map((obj) => {
-            return Object.keys(obj)[0];
-          });
-          // console.log("datakeys init", dataKeys);
-          dataKeys.map((key, i) => {
-            const formKey = data[i][key]["id"];
-            // console.log("formkey", formKey);
-            initFormValue[formKey] = "";
-            return null;
-          });
-          // console.log("new datakeys init val", initFormValue);
-          // console.log("data init schema type", dataKeys);
-          setFormInitialValues(initFormValue);
+  useEffect(
+    (dataDomain, mySky) => {
+      async function initFormSchema(dataDomain, mySky) {
+        try {
+          // console.log("enterd forminit");
+          const filePath = dataDomain + "/" + "formSchema";
+          // console.log("filePath", filePath);
+          const { data } = await mySky.getJSON(filePath);
+          // console.log("dataget", data);
+          // console.log("dataget-type", typeof data);
+          if (data !== null) {
+            setFormSchema(data);
+            const initFormValue = {};
+            const dataKeys = data.map((obj) => {
+              return Object.keys(obj)[0];
+            });
+            // console.log("datakeys init", dataKeys);
+            dataKeys.map((key, i) => {
+              const formKey = data[i][key]["id"];
+              // console.log("formkey", formKey);
+              initFormValue[formKey] = "";
+              return null;
+            });
+            // console.log("new datakeys init val", initFormValue);
+            // console.log("data init schema type", dataKeys);
+            setFormInitialValues(initFormValue);
+          }
+          // setLoadinginitFormSchema(false);
+        } catch (error) {
+          console.log(`error with getJSON: ${error.message}`);
         }
-        // setLoadinginitFormSchema(false);
-      } catch (error) {
-        console.log(`error with getJSON: ${error.message}`);
       }
-    }
 
-    initFormSchema();
-  }, [updatedFormSchema]);
+      initFormSchema(dataDomain, mySky);
+    },
+    [updatedFormSchema]
+  );
 
   const updateFormSchema = (dataLink) => {
     setupdatedFormSchema(dataLink);
