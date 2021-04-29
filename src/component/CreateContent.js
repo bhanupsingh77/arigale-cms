@@ -1,13 +1,6 @@
-import React, { useState, useEffect } from "react";
-import {
-  Form,
-  CustomField,
-  TextField,
-  TextArea,
-  SelectField,
-  SubmitButton,
-  ResetButton,
-} from "./FormElements";
+import React, { useState } from "react";
+import { Form, SubmitButton, ResetButton } from "./FormElements";
+import { getFormElement } from "../utils.js";
 import { makeStyles } from "@material-ui/core/styles";
 import { Backdrop, Button, CircularProgress } from "@material-ui/core";
 import JSONPretty from "react-json-pretty";
@@ -121,32 +114,8 @@ function CreateContent({
   //     setValidationSchema(Yup.object().shape({ ..._validationSchema }));
   //   };
 
-  const getFormElement = (elementName, elementSchema) => {
-    const props = {
-      name: elementName,
-      type: elementSchema.type,
-      label: elementSchema.label,
-      options: elementSchema.options,
-    };
-
-    if (elementSchema.type === "date" || elementSchema.type === "url") {
-      return <CustomField {...props} />;
-    }
-
-    if (elementSchema.type === "textarea") {
-      return <TextArea {...props} />;
-    }
-
-    if (elementSchema.type === "text" || elementSchema.type === "email") {
-      return <TextField {...props} />;
-    }
-
-    if (elementSchema.type === "select") {
-      return <SelectField {...props} />;
-    }
-  };
-
   const onSubmit = (values, { setSubmitting, resetForm, setStatus }) => {
+    // console.log("init val form ", formInitialValues);
     let val = [];
     val.push(values);
     setFormData(val);
@@ -154,20 +123,16 @@ function CreateContent({
     // resetForm({ title: "" });
   };
 
-  // const onReset = ({ resetForm }) => {
-  //   console.log("reset-val", resetForm);
-  // };
-
   const handleMySkyWrite = async (jsonData) => {
     // Use setJSON to save the user's information to MySky file
     try {
       setButtonDisabled(true);
       setLoadingSaveJsonData(true);
-      console.log(jsonData);
-      console.log("filePath", filePath);
-      const { skylink } = await mySky.setJSON(filePath, jsonData);
+      // console.log(jsonData);
+      // console.log("filePath", filePath);
+      const { dataLink } = await mySky.setJSON(filePath, jsonData);
       await contentRecord.recordInteraction({
-        skylink,
+        skylink: dataLink,
         metadata: { content: "created" },
       });
       setLoadingSaveJsonData(false);
@@ -185,12 +150,12 @@ function CreateContent({
       const { data } = await mySky.getJSON(filePath);
       if (data !== null) {
         let val = [];
-        console.log("filePath", filePath);
+        // console.log("filePath", filePath);
         // const { data } = await mySky.getJSON(filePath);
         data.push(jsonData[0]);
-        const { skylink } = await mySky.setJSON(filePath, data);
+        const { dataLink } = await mySky.setJSON(filePath, data);
         await contentRecord.recordInteraction({
-          skylink,
+          skylink: dataLink,
           metadata: { content: "updated" },
         });
         alert("Data added to existing file");
@@ -210,12 +175,12 @@ function CreateContent({
       setButtonDisabled(true);
       setLoadingPreviewJsonData(true);
       const { data } = await mySky.getJSON(filePath);
-      console.log("dataTest", data);
+      // console.log("dataTest", data);
       if (data !== null) {
-        console.log("filePath", filePath);
+        // console.log("filePath", filePath);
         // const { data } = await mySky.getJSON(filePath);
-        console.log("dataget", data);
-        console.log("dataget-type", typeof data);
+        // console.log("dataget", data);
+        // console.log("dataget-type", typeof data);
         setPreviewJsonData(data);
         alert("Scroll down to preview saved data to DataBase");
       } else {
@@ -232,17 +197,17 @@ function CreateContent({
     try {
       setButtonDisabled(true);
       setLoadingSkyLink(true);
-      const { skylink } = await mySky.getJSON(filePath);
-      console.log("dataTest", skylink);
-      if (skylink !== null) {
-        console.log("filePath", filePath);
-        // const { skylink } = await mySky.getJSON(filePath);
-        console.log("dataget", skylink);
-        console.log("dataget-type", typeof skylink);
-        setSkyLink(skylink);
-        alert("Scroll down to preview skylink");
+      const { dataLink } = await mySky.getJSON(filePath);
+      // console.log("dataTest", dataLink);
+      if (dataLink !== null) {
+        // console.log("filePath", filePath);
+        // const { dataLink } = await mySky.getJSON(filePath);
+        // console.log("dataget", dataLink);
+        // console.log("dataget-type", typeof dataLink);
+        setSkyLink(dataLink);
+        alert("Scroll down to preview dataLink");
       } else {
-        alert("Save Data first to preview skylink");
+        alert("Save Data first to preview dataLink");
       }
       setLoadingSkyLink(false);
       setButtonDisabled(false);
@@ -355,13 +320,13 @@ function CreateContent({
                 }
                 onClick={handleMySkySkyLink}
               >
-                Get skylink
+                Get dataLink
               </Button>
             </div>
           ) : null}
           {skyLink !== null ? (
             <div className={classes.container}>
-              <h1>SkyLink</h1>
+              <h1>DataLink</h1>
               <a
                 id="skylink-blog"
                 href={`https://siasky.net/${skyLink}`}
@@ -375,7 +340,7 @@ function CreateContent({
                 style={{ border: "1px red solid", margin: "8px" }}
                 onClick={copyFileLink}
               >
-                Copy SkyLink
+                Copy DataLink
               </Button>
             </div>
           ) : null}
