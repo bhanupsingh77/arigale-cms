@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Form, SubmitButton, ResetButton } from "./FormElements";
-import { getFormElement } from "../utils.js";
+import { Form, SubmitButton, ResetButton } from "../FormElements";
+import { getFormElement } from "../../utils.js";
 import { makeStyles } from "@material-ui/core/styles";
 import { Button, CircularProgress } from "@material-ui/core";
 import JSONPretty from "react-json-pretty";
