@@ -22,8 +22,8 @@ const useStyles = makeStyles((theme) => ({
     textAlign: "center",
   },
   button: {
-    width: "90px",
-    height: "36px",
+    width: "95px",
+    height: "40px",
     borderRadius: "5px",
     border: "1px solid red",
     color: "#fff",
@@ -64,6 +64,7 @@ export default function CreateContentCreation({
   handleCreateContentCreationRenderStop,
   loadingContentCreationDataSaving,
   handleLoadingContentCreationDataSaving,
+  handleCreatedNewContent,
 }) {
   const classes = useStyles();
 
@@ -78,7 +79,6 @@ export default function CreateContentCreation({
       const entryFilePath = createContentCreationFilePath + "/" + "entry";
       const { data } = await mySky.getJSON(entryFilePath);
       if (data !== null) {
-        const { data } = await mySky.getJSON(entryFilePath);
         data["entry"] = data["entry"] + 1;
         const filePath = createContentCreationFilePath + "/" + data["entry"];
         console.log("entry update ?", data);
@@ -89,6 +89,7 @@ export default function CreateContentCreation({
           skylink: dataLink,
           metadata: { content: "created" },
         });
+        handleCreatedNewContent(data["entry"]);
       } else {
         const entry = { entry: 1 };
         const filePath = createContentCreationFilePath + "/" + entry["entry"];
@@ -99,24 +100,13 @@ export default function CreateContentCreation({
           skylink: dataLink,
           metadata: { content: "created" },
         });
+        handleCreatedNewContent(entry["entry"]);
       }
-      // const filePath = "";
-      // setButtonDisabled(true);
-      // setLoadingSaveJsonData(true);
-      // console.log(jsonData);
-      // console.log("filePath", filePath);
-      // const { dataLink } = await mySky.setJSON(filePath, jsonData);
-      // setLoadingSaveJsonData(false);
-      // setButtonDisabled(false);
-      // alert("Data saved");
     } catch (error) {
-      console.log(`error with setJSON: ${error.message}`);
+      console.log(`error with setJSON or getJSON: ${error.message}`);
     }
-    // let val = [];
-    // val.push(values);
-    // setFormData(val);
+
     setSubmitting(false);
-    // resetForm({ title: "" });
     handleLoadingContentCreationDataSaving(false);
     handleCreateContentCreationRenderStop();
   };
@@ -159,12 +149,7 @@ export default function CreateContentCreation({
             </div>
           </Form>
         </div>
-      ) : (
-        <div>
-          <h1>Create Content Schema first to create content</h1>
-          <h2>(Select Content Schema button from side bar)</h2>
-        </div>
-      )}
+      ) : null}
     </div>
   );
 }

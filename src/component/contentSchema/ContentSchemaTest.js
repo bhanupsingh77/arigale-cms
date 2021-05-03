@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import {
   Backdrop,
   Button,
+  IconButton,
   CircularProgress,
   Paper,
   Typography,
@@ -11,6 +12,7 @@ import ContentSchemaCreation from "./ContentSchemaCreation";
 import ContentSchemaTable from "./ContentSchemaTable";
 import ContentSchemaView from "./ContentSchemaView";
 import { makeStyles } from "@material-ui/core/styles";
+import CreateIcon from "@material-ui/icons/Create";
 
 const useStyles = makeStyles((theme) => ({
   backdrop: {
@@ -98,6 +100,7 @@ export default function ContentSchemaTest({
             style={{
               display: "flex",
               justifyContent: "space-between",
+              padding: "5px",
               paddingLeft: "30px",
             }}
           >
@@ -112,16 +115,21 @@ export default function ContentSchemaTest({
                 fontWeight: "800",
               }}
             >
-              Content Schema
+              Create Schema
             </Typography>
-            <Button
-              variant="contained"
-              color="primary"
-              style={{ border: "1px red solid", margin: "8px" }}
+            <IconButton
+              color="inherit"
+              style={{
+                width: "45px",
+                height: "45px",
+                border: "1px red solid",
+                color: "#fff",
+                backgroundColor: "#3f51b5",
+              }}
               onClick={handleContentSchemaNameRender}
             >
-              Create Schema
-            </Button>
+              <CreateIcon />
+            </IconButton>
           </Paper>
           {
             <div style={{ marginTop: "50px" }}>

@@ -133,9 +133,22 @@ export default function Dashboard({
   const [loadingContentSchemaTest, setLoadingContentSchemaTest] = useState(
     true
   );
+  const [
+    loadingCreateContentUpdateData,
+    setLoadingCreateContentUpdateData,
+  ] = useState(false);
+
+  // for only first schema for now
+  const [entryNumber, setEntryNumber] = useState(null);
+  const [createdNewContent, setCreatedNewContent] = useState(null);
+  // used to get content data for provided entry
+  const [savedContentEntryNumber, setSavedContentEntryNumber] = useState(null);
+  const [
+    initvalueForSavedContentEntry,
+    setInitvalueForSavedContentEntry,
+  ] = useState({});
 
   //getting saved values for ContentSchema
-
   useEffect(() => {
     async function initContentSchema() {
       try {
@@ -210,6 +223,53 @@ export default function Dashboard({
   //   initCreateContent();
   // }, [updatedFormSchema, dataDomain, mySky]);
 
+  // for createContent
+  useEffect(() => {
+    async function initCreateContent() {
+      try {
+        const filePath =
+          dataDomain +
+          "/" +
+          "createContent" +
+          "/" +
+          contentSchemaNameList +
+          "/" +
+          "entry";
+        const { data } = await mySky.getJSON(filePath);
+        console.log("entry data", data);
+        if (data !== null) {
+          // const { data } = await mySky.getJSON(filePath);
+          console.log("data in table", data["entry"]);
+          setEntryNumber(data["entry"]);
+        }
+      } catch (error) {
+        console.log(`error with mySky methods: ${error.message}`);
+      }
+    }
+    initCreateContent();
+  }, [contentSchemaNameList, createdNewContent]);
+
+  // for getting saved content data for provided content entry number -> CreateContentUpdateData
+  useEffect(async () => {
+    try {
+      if (savedContentEntryNumber !== null) {
+        console.log("savedContentEntryNumber", savedContentEntryNumber);
+        const filePath =
+          dataDomain +
+          "/" +
+          "createContent" +
+          "/" +
+          contentSchemaNameList +
+          "/" +
+          savedContentEntryNumber;
+
+        const { data } = await mySky.getJSON(filePath);
+        setInitvalueForSavedContentEntry(data);
+        handleLoadingCreateContentUpdateDataStop();
+      }
+    } catch (error) {}
+  }, [savedContentEntryNumber]);
+
   const updateFormSchema = (dataLink) => {
     setupdatedFormSchema(dataLink);
   };
@@ -223,6 +283,27 @@ export default function Dashboard({
 
   const handleListItemClick = (index) => {
     setSelectedIndex(index);
+  };
+
+  const handleUpdateSavedContentEntryNumber = (entry) => {
+    setSavedContentEntryNumber(entry);
+  };
+
+  const handleLoadingCreateContentUpdateDataStart = () => {
+    setLoadingCreateContentUpdateData(true);
+  };
+
+  const handleLoadingCreateContentUpdateDataStop = () => {
+    setLoadingCreateContentUpdateData(false);
+  };
+
+  const handleSavedContentEntryNumberValueReset = () => {
+    setSavedContentEntryNumber(null);
+  };
+
+  const handleCreatedNewContent = (entry) => {
+    console.log("CreatedNewContent", entry);
+    setCreatedNewContent(entry);
   };
 
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
@@ -359,6 +440,20 @@ export default function Dashboard({
               contentSchemaNameListValue={contentSchemaNameListValue}
               // formSchema={formSchema}
               formInitialValues={formInitialValues}
+              entryNumber={entryNumber}
+              initvalueForSavedContentEntry={initvalueForSavedContentEntry}
+              handleUpdateSavedContentEntryNumber={
+                handleUpdateSavedContentEntryNumber
+              }
+              handleLoadingCreateContentUpdateDataStart={
+                handleLoadingCreateContentUpdateDataStart
+              }
+              loadingCreateContentUpdateData={loadingCreateContentUpdateData}
+              handleSavedContentEntryNumberValueReset={
+                handleSavedContentEntryNumberValueReset
+              }
+              savedContentEntryNumber={savedContentEntryNumber}
+              handleCreatedNewContent={handleCreatedNewContent}
             />
           )}
         </Container>

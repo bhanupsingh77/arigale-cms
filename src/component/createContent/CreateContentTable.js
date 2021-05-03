@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -10,52 +10,65 @@ import Paper from "@material-ui/core/Paper";
 import { Button, CircularProgress, Typography } from "@material-ui/core";
 
 const useStyles = makeStyles({
+  container: { marginTop: "50px" },
   table: {
-    minWidth: 650,
+    minWidth: 350,
   },
 });
 
 export default function CreateContentTable({
+  mySky,
   contentSchemaNameList,
-  handleContentSchemaViewRender,
+  createContentFilePath,
+  entryNumber,
+  handleCreateContentUpdateDataRender,
 }) {
   const classes = useStyles();
+  // const [entryNumber, setEntryNumber] = useState();
 
-  function createData(name, id) {
-    return { name, id };
+  function createData(entry, schema) {
+    const arr = Array(entry).fill(entry);
+    const dataArray = arr.map((e, i) => {
+      return { entry: i + 1, schema: schema };
+    });
+    return dataArray;
   }
 
-  const rows = [createData(contentSchemaNameList, contentSchemaNameList)];
+  const rows = createData(entryNumber, contentSchemaNameList);
+
+  // console.log("rows", rows, "xxxxx", entryNumber);
 
   return (
     <div>
-      {contentSchemaNameList ? (
-        <div>
+      {entryNumber ? (
+        <div className={classes.container}>
           <TableContainer component={Paper}>
             <Table className={classes.table}>
               <TableHead>
                 <TableRow>
-                  <TableCell>Name</TableCell>
-                  <TableCell align="left">ID</TableCell>
+                  <TableCell>Entry</TableCell>
+                  <TableCell align="left">Schema</TableCell>
                   {/* placeholder */}
                   <TableCell align="left"></TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {rows.map((row) => (
-                  <TableRow key={row.name}>
+                  <TableRow key={row.entry}>
                     <TableCell component="th" scope="row">
-                      {row.name}
+                      {row.entry}
                     </TableCell>
-                    <TableCell align="left">{row.id}</TableCell>
+                    <TableCell align="left">{row.schema}</TableCell>
                     <TableCell align="right">
                       <Button
                         variant="contained"
                         color="primary"
-                        style={{ border: "1px red solid", margin: "8px" }}
-                        onClick={handleContentSchemaViewRender}
+                        style={{ border: "1px red solid" }}
+                        onClick={() =>
+                          handleCreateContentUpdateDataRender(row.entry)
+                        }
                       >
-                        view schema
+                        Update Entry
                       </Button>
                     </TableCell>
                   </TableRow>

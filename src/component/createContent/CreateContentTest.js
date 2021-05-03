@@ -2,10 +2,19 @@ import React, { useState } from "react";
 // import { Form, SubmitButton, ResetButton } from "../FormElements";
 // import { getFormElement } from "../../utils.js";
 // import { makeStyles } from "@material-ui/core/styles";
-import { Button, CircularProgress, Paper, Typography } from "@material-ui/core";
+import {
+  Button,
+  CircularProgress,
+  IconButton,
+  Paper,
+  Typography,
+} from "@material-ui/core";
+import CreateIcon from "@material-ui/icons/Create";
 import CreateContentSchemaType from "./CreateContentSchemaType";
 import CreateContentCreation from "./CreateContentCreation";
 import CreateContentTable from "./CreateContentTable";
+import CreateContentUpdateData from "./CreateContentUpdateData";
+import CreateContentGetAllData from "./CreateContentGetAllData";
 
 export default function CreateContentTest({
   dataDomain,
@@ -15,6 +24,14 @@ export default function CreateContentTest({
   contentSchemaNameListValue,
   // formSchema,
   formInitialValues,
+  entryNumber,
+  initvalueForSavedContentEntry,
+  handleUpdateSavedContentEntryNumber,
+  handleLoadingCreateContentUpdateDataStart,
+  loadingCreateContentUpdateData,
+  handleSavedContentEntryNumberValueReset,
+  savedContentEntryNumber,
+  handleCreatedNewContent,
 }) {
   const [
     createContentSchemaTypeRender,
@@ -23,6 +40,11 @@ export default function CreateContentTest({
   const [
     createContentCreationRender,
     setCreateContentCreationRender,
+  ] = useState(false);
+
+  const [
+    createContentUpdateDataRender,
+    setCreateContentUpdateDataRender,
   ] = useState(false);
 
   const [
@@ -47,6 +69,18 @@ export default function CreateContentTest({
     setCreateContentSchemaTypeRender(false);
   };
 
+  const handleCreateContentUpdateDataRender = (entry) => {
+    console.log("current entry number", entry);
+    setCreateContentUpdateDataRender(true);
+    handleUpdateSavedContentEntryNumber(entry);
+    handleLoadingCreateContentUpdateDataStart();
+  };
+
+  const handleCreateContentUpdateDataRenderStop = () => {
+    setCreateContentUpdateDataRender(false);
+    handleSavedContentEntryNumberValueReset();
+  };
+
   const handleLoadingContentCreationDataSaving = (v) => {
     setLoadingContentCreationDataSaving(v);
   };
@@ -55,7 +89,21 @@ export default function CreateContentTest({
 
   return (
     <div>
-      {createContentCreationRender ? (
+      {createContentUpdateDataRender ? (
+        <CreateContentUpdateData
+          contentSchemaNameList={contentSchemaNameList}
+          contentSchemaNameListValue={contentSchemaNameListValue}
+          handleCreateContentUpdateDataRenderStop={
+            handleCreateContentUpdateDataRenderStop
+          }
+          initvalueForSavedContentEntry={initvalueForSavedContentEntry}
+          loadingCreateContentUpdateData={loadingCreateContentUpdateData}
+          savedContentEntryNumber={savedContentEntryNumber}
+          createContentFilePath={createContentFilePath}
+          contentRecord={contentRecord}
+          mySky={mySky}
+        />
+      ) : createContentCreationRender ? (
         <CreateContentCreation
           dataDomain={dataDomain}
           contentRecord={contentRecord}
@@ -72,6 +120,7 @@ export default function CreateContentTest({
           handleLoadingContentCreationDataSaving={
             handleLoadingContentCreationDataSaving
           }
+          handleCreatedNewContent={handleCreatedNewContent}
         />
       ) : createContentSchemaTypeRender ? (
         <CreateContentSchemaType
@@ -81,12 +130,13 @@ export default function CreateContentTest({
           }
           handleCreateContentCreationRender={handleCreateContentCreationRender}
         />
-      ) : (
+      ) : contentSchemaNameList ? (
         <div>
           <Paper
             style={{
               display: "flex",
               justifyContent: "space-between",
+              padding: "5px",
               paddingLeft: "30px",
             }}
           >
@@ -103,16 +153,43 @@ export default function CreateContentTest({
             >
               Create Content
             </Typography>
-            <Button
-              variant="contained"
-              color="primary"
-              style={{ border: "1px red solid", margin: "8px" }}
+            <IconButton
+              color="inherit"
+              style={{
+                width: "45px",
+                height: "45px",
+                border: "1px red solid",
+                color: "#fff",
+                backgroundColor: "#3f51b5",
+              }}
               onClick={handleCreateContentSchemaTypeRender}
             >
-              Create Content
-            </Button>
+              <CreateIcon />
+            </IconButton>
           </Paper>
-          {<CreateContentTable />}
+          {entryNumber ? (
+            <CreateContentGetAllData
+              mySky={mySky}
+              contentSchemaNameList={contentSchemaNameList}
+              createContentFilePath={createContentFilePath}
+              entryNumber={entryNumber}
+            />
+          ) : null}
+          {
+            <CreateContentTable
+              mySky={mySky}
+              contentSchemaNameList={contentSchemaNameList}
+              createContentFilePath={createContentFilePath}
+              entryNumber={entryNumber}
+              handleCreateContentUpdateDataRender={
+                handleCreateContentUpdateDataRender
+              }
+            />
+          }
+        </div>
+      ) : (
+        <div>
+          <h1>Create Content Schema first to Create Content</h1>
         </div>
       )}
     </div>

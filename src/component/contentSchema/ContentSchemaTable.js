@@ -11,7 +11,7 @@ import { Button, CircularProgress, Typography } from "@material-ui/core";
 
 const useStyles = makeStyles({
   table: {
-    minWidth: 650,
+    minWidth: 350,
   },
 });
 
@@ -52,7 +52,7 @@ export default function ContentSchemaTable({
                       <Button
                         variant="contained"
                         color="primary"
-                        style={{ border: "1px red solid", margin: "8px" }}
+                        style={{ border: "1px red solid" }}
                         onClick={handleContentSchemaViewRender}
                       >
                         view schema
