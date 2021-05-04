@@ -35,11 +35,14 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function ContentSchemaView({
+  contentRecord,
+  mySky,
   contentSchemaNameList,
   contentSchemaNameListValue,
   handleContentSchemaViewRenderStop,
 }) {
   const classes = useStyles();
+
   return (
     <div>
       <div style={{ display: "flex", justifyContent: "flex-end" }}>

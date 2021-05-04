@@ -70,7 +70,7 @@ export default function CreateContentTest({
   };
 
   const handleCreateContentUpdateDataRender = (entry) => {
-    console.log("current entry number", entry);
+    // console.log("current entry number", entry);
     setCreateContentUpdateDataRender(true);
     handleUpdateSavedContentEntryNumber(entry);
     handleLoadingCreateContentUpdateDataStart();
@@ -136,8 +136,7 @@ export default function CreateContentTest({
             style={{
               display: "flex",
               justifyContent: "space-between",
-              padding: "5px",
-              paddingLeft: "30px",
+              padding: "5px 30px",
             }}
           >
             <Typography
@@ -154,13 +153,11 @@ export default function CreateContentTest({
               Create Content
             </Typography>
             <IconButton
-              color="inherit"
+              color="primary"
               style={{
                 width: "45px",
                 height: "45px",
-                border: "1px red solid",
-                color: "#fff",
-                backgroundColor: "#3f51b5",
+                border: "1px #3f51b5 solid",
               }}
               onClick={handleCreateContentSchemaTypeRender}
             >

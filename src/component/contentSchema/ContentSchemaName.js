@@ -14,9 +14,6 @@ export default function ContentSchemaName({
   handleContentSchemaNameRenderStop,
   handleContentSchemaCreationRender,
 }) {
-  const valueTest = (value) => {
-    console.log("val", value);
-  };
   return (
     <div>
       <div style={{ display: "flex", justifyContent: "flex-end" }}>
@@ -49,13 +46,11 @@ export default function ContentSchemaName({
             placeholder="eg. blogPost, poadcast..."
             required
           />
-          {/* <button type="submit">submit</button> */}
           <Button
             type="submit"
             variant="contained"
             color="primary"
             style={{ border: "1px red solid", marginTop: "80px" }}
-            // onClick={handleContentSchemaCreationRender}
           >
             Create new custom Schema
           </Button>

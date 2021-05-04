@@ -126,10 +126,14 @@ export default function Dashboard({
   const [contentSchemaNameListValue, setContentSchemaNameListValue] = useState(
     null
   );
-
-  const [formSchema, setFormSchema] = useState([]);
+  const [disableCreateSchemaButton, setDisableCreateSchemaButton] = useState(
+    false
+  );
   const [formInitialValues, setFormInitialValues] = useState({});
-  const [updatedFormSchema, setupdatedFormSchema] = useState([]);
+  const [
+    updateDataOnSchemaCreation,
+    setUpdateDataOnSchemaCreation,
+  ] = useState();
   const [loadingContentSchemaTest, setLoadingContentSchemaTest] = useState(
     true
   );
@@ -154,15 +158,17 @@ export default function Dashboard({
       try {
         const filePath = dataDomain + "/" + "contentSchema";
         const { data } = await mySky.getJSON(filePath);
-        console.log("data1", data);
+        // console.log("data1", data);
         if (data !== null) {
           const filePath = dataDomain + "/" + "contentSchema";
           let { data } = await mySky.getJSON(filePath);
-          setContentSchemaNameList(data[0]);
-          const filePathSchema = filePath + "/" + data[0];
+          // console.log("name", data[0]["name"]);
+          setContentSchemaNameList(data[0]["name"]);
+          const filePathSchema = filePath + "/" + data[0]["name"];
           data = await mySky.getJSON(filePathSchema);
           const contentSchemaValue = data.data;
           setContentSchemaNameListValue(contentSchemaValue);
+          setDisableCreateSchemaButton(true);
           const initFormValue = {};
           const dataKeys = contentSchemaValue.map((obj) => {
             return Object.keys(obj)[0];
@@ -174,9 +180,9 @@ export default function Dashboard({
             initFormValue[formKey] = "";
             return null;
           });
-          console.log("new datakeys init val", initFormValue);
+          // console.log("new datakeys init val", initFormValue);
           setFormInitialValues(initFormValue);
-          console.log("data2", data.data);
+          // console.log("data2", data.data);
         }
       } catch (error) {
         console.log(`error with mySky methods: ${error.message}`);
@@ -184,44 +190,7 @@ export default function Dashboard({
       setLoadingContentSchemaTest(false);
     }
     initContentSchema();
-  }, []);
-
-  // getting formSchema and formInitialValues, value to pass to component CreateContent
-  // useEffect(() => {
-  //   async function initCreateContent() {
-  //     try {
-  //       console.log("123");
-  //       // console.log("enterd forminit");
-  //       const filePath = dataDomain + "/" + "formSchema";
-  //       // console.log("filePath", filePath);
-  //       const { data } = await mySky.getJSON(filePath);
-  //       // console.log("dataget", data);
-  //       // console.log("dataget-type", typeof data);
-  //       if (data !== null) {
-  //         setFormSchema(data);
-  //         const initFormValue = {};
-  //         const dataKeys = data.map((obj) => {
-  //           return Object.keys(obj)[0];
-  //         });
-  //         // console.log("datakeys init", dataKeys);
-  //         dataKeys.map((key, i) => {
-  //           const formKey = data[i][key]["id"];
-  //           // console.log("formkey", formKey);
-  //           initFormValue[formKey] = "";
-  //           return null;
-  //         });
-  //         // console.log("new datakeys init val", initFormValue);
-  //         // console.log("data init schema type", dataKeys);
-  //         setFormInitialValues(initFormValue);
-  //       }
-  //       // setLoadinginitCreateContent(false);
-  //     } catch (error) {
-  //       console.log(`error with getJSON: ${error.message}`);
-  //     }
-  //   }
-
-  //   initCreateContent();
-  // }, [updatedFormSchema, dataDomain, mySky]);
+  }, [updateDataOnSchemaCreation]);
 
   // for createContent
   useEffect(() => {
@@ -236,10 +205,10 @@ export default function Dashboard({
           "/" +
           "entry";
         const { data } = await mySky.getJSON(filePath);
-        console.log("entry data", data);
+        // console.log("entry data", data);
         if (data !== null) {
           // const { data } = await mySky.getJSON(filePath);
-          console.log("data in table", data["entry"]);
+          // console.log("data in table", data["entry"]);
           setEntryNumber(data["entry"]);
         }
       } catch (error) {
@@ -253,7 +222,7 @@ export default function Dashboard({
   useEffect(async () => {
     try {
       if (savedContentEntryNumber !== null) {
-        console.log("savedContentEntryNumber", savedContentEntryNumber);
+        // console.log("savedContentEntryNumber", savedContentEntryNumber);
         const filePath =
           dataDomain +
           "/" +
@@ -269,10 +238,6 @@ export default function Dashboard({
       }
     } catch (error) {}
   }, [savedContentEntryNumber]);
-
-  const updateFormSchema = (dataLink) => {
-    setupdatedFormSchema(dataLink);
-  };
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -302,8 +267,16 @@ export default function Dashboard({
   };
 
   const handleCreatedNewContent = (entry) => {
-    console.log("CreatedNewContent", entry);
+    // console.log("CreatedNewContent", entry);
     setCreatedNewContent(entry);
+  };
+
+  const handleUpdateDataOnSchemaCreation = (value) => {
+    setUpdateDataOnSchemaCreation(value);
+  };
+
+  const handleLoadingContentSchemaTestStart = () => {
+    setLoadingContentSchemaTest(true);
   };
 
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
@@ -417,6 +390,13 @@ export default function Dashboard({
               loadingContentSchemaTest={loadingContentSchemaTest}
               contentSchemaNameList={contentSchemaNameList}
               contentSchemaNameListValue={contentSchemaNameListValue}
+              disableCreateSchemaButton={disableCreateSchemaButton}
+              handleUpdateDataOnSchemaCreation={
+                handleUpdateDataOnSchemaCreation
+              }
+              handleLoadingContentSchemaTestStart={
+                handleLoadingContentSchemaTestStart
+              }
             />
           ) : (
             // <ContentSchema

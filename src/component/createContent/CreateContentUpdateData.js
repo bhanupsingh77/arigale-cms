@@ -68,8 +68,8 @@ export default function CreateContentUpdateData({
 
   const onSubmit = async (values, { setSubmitting, resetForm, setStatus }) => {
     setUpdatingData(true);
-    console.log("init val form ", values);
-    console.log("entry on submit", savedContentEntryNumber);
+    // console.log("init val form ", values);
+    // console.log("entry on submit", savedContentEntryNumber);
     try {
       const jsonData = values;
       const filePath =
@@ -79,7 +79,7 @@ export default function CreateContentUpdateData({
         "/" +
         savedContentEntryNumber;
       const { data, dataLink } = await mySky.setJSON(filePath, jsonData);
-      console.log("updated data", data);
+      // console.log("updated data", data);
       await contentRecord.recordInteraction({
         skylink: dataLink,
         metadata: { content: "updated" },

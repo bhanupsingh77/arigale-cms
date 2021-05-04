@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import {
+  Backdrop,
   Button,
   CircularProgress,
   Paper,
@@ -33,6 +34,10 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     justifyContent: "space-between",
   },
+  backdrop: {
+    zIndex: theme.zIndex.drawer + 1,
+    color: "#fff",
+  },
 }));
 
 export default function ContentSchemaCreation({
@@ -42,6 +47,8 @@ export default function ContentSchemaCreation({
   contentSchemaFilePath,
   contentSchemaName,
   handleContentSchemaCreationRenderClose,
+  handleUpdateDataOnSchemaCreation,
+  handleLoadingContentSchemaTestStart,
 }) {
   const classes = useStyles();
   const [formSchema, setFormSchema] = useState([]);
@@ -49,7 +56,6 @@ export default function ContentSchemaCreation({
     []
   );
   const [buttonDisabled, setButtonDisabled] = useState(false);
-  const [loadingPreviewJsonData, setLoadingPreviewJsonData] = useState(false);
   const [loadingSaveJsonData, setLoadingSaveJsonData] = useState(false);
 
   const contentSchemaCreationFilePath =
@@ -159,16 +165,18 @@ export default function ContentSchemaCreation({
     try {
       const { data } = await mySky.getJSON(contentSchemaFilePath);
       if (data !== null) {
-        const { datalink } = await mySky.setJSON(
+        const jsonData = data.push({ name: contentSchemaName });
+        // console.log("jsd", data);
+        const { dataLink } = await mySky.setJSON(
           contentSchemaFilePath,
-          data.push(contentSchemaName)
+          jsonData
         );
-        console.log("test1", dataLink);
+        // console.log("test1", dataLink);
       } else {
         let arr = [];
-        arr.push(contentSchemaName);
-        const { datalink } = await mySky.setJSON(contentSchemaFilePath, arr);
-        console.log("test2", dataLink);
+        arr.push({ name: contentSchemaName });
+        const { dataLink } = await mySky.setJSON(contentSchemaFilePath, arr);
+        // console.log("test2", dataLink);
       }
 
       const { dataLink } = await mySky.setJSON(
@@ -183,8 +191,9 @@ export default function ContentSchemaCreation({
           contentSchema: `New Content Schema created: ${contentSchemaName}`,
         },
       });
-      console.log("datalink", dataLink);
-      //   updateFormSchema(dataLink);
+      // console.log("datalink", dataLink);
+      handleUpdateDataOnSchemaCreation(dataLink);
+      handleLoadingContentSchemaTestStart();
       handleContentSchemaCreationRenderClose();
     } catch (error) {
       console.log(`error with setJSON: ${error.message}`);
@@ -202,6 +211,9 @@ export default function ContentSchemaCreation({
 
   return (
     <div>
+      <Backdrop className={classes.backdrop} open={loadingSaveJsonData}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
       <div style={{ display: "flex", justifyContent: "flex-end" }}>
         <IconButton
           color="secondary"
@@ -267,9 +279,6 @@ export default function ContentSchemaCreation({
               color="primary"
               style={{ border: "1px red solid", margin: "8px" }}
               disabled={buttonDisabled ? true : false}
-              startIcon={
-                loadingSaveJsonData ? <CircularProgress size={20} /> : null
-              }
               onClick={() => handleMySkyWrite(formSchema)}
             >
               Save

@@ -28,7 +28,7 @@ export default function CreateContentGetAllData({
   );
 
   const handleGetAllDataDataLink = async () => {
-    console.log("started");
+    // console.log("started");
     setLoadingAllContentDataLink(true);
     const filePath = createContentFilePath + "/" + contentSchemaNameList;
     const arr = Array(entryNumber).fill(entryNumber);
@@ -51,7 +51,7 @@ export default function CreateContentGetAllData({
     await navigator.clipboard.writeText(text);
   };
 
-  console.log("arr", allContentDataLink);
+  // console.log("arr", allContentDataLink);
 
   return (
     <div>

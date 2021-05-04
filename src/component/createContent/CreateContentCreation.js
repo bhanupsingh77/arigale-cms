@@ -73,7 +73,7 @@ export default function CreateContentCreation({
 
   const onSubmit = async (values, { setSubmitting, resetForm, setStatus }) => {
     handleLoadingContentCreationDataSaving(true);
-    console.log("init val form ", values);
+    // console.log("init val form ", values);
     try {
       const jsonData = values;
       const entryFilePath = createContentCreationFilePath + "/" + "entry";
@@ -81,10 +81,10 @@ export default function CreateContentCreation({
       if (data !== null) {
         data["entry"] = data["entry"] + 1;
         const filePath = createContentCreationFilePath + "/" + data["entry"];
-        console.log("entry update ?", data);
+        // console.log("entry update ?", data);
         await mySky.setJSON(entryFilePath, data);
         const { dataLink } = await mySky.setJSON(filePath, jsonData);
-        console.log("saved data", dataLink);
+        // console.log("saved data", dataLink);
         await contentRecord.recordInteraction({
           skylink: dataLink,
           metadata: { content: "created" },
@@ -95,7 +95,7 @@ export default function CreateContentCreation({
         const filePath = createContentCreationFilePath + "/" + entry["entry"];
         await mySky.setJSON(entryFilePath, entry);
         const { dataLink } = await mySky.setJSON(filePath, jsonData);
-        console.log("saved data-1", dataLink);
+        // console.log("saved data-1", dataLink);
         await contentRecord.recordInteraction({
           skylink: dataLink,
           metadata: { content: "created" },

@@ -28,6 +28,9 @@ export default function ContentSchemaTest({
   loadingContentSchemaTest,
   contentSchemaNameList,
   contentSchemaNameListValue,
+  disableCreateSchemaButton,
+  handleUpdateDataOnSchemaCreation,
+  handleLoadingContentSchemaTestStart,
 }) {
   const classes = useStyles();
   const [contentSchemaName, setcontentSchemaName] = useState(null);
@@ -50,7 +53,7 @@ export default function ContentSchemaTest({
 
   const handleContentSchemaCreationRender = (value) => {
     setcontentSchemaName(value.contentSchemaName);
-    console.log("val", value);
+    // console.log("val", value);
     setcontentSchemaCreationRender(true);
   };
 
@@ -74,6 +77,8 @@ export default function ContentSchemaTest({
       </Backdrop>
       {contentSchemaViewRender ? (
         <ContentSchemaView
+          contentRecord={contentRecord}
+          mySky={mySky}
           contentSchemaNameList={contentSchemaNameList}
           contentSchemaNameListValue={contentSchemaNameListValue}
           handleContentSchemaViewRenderStop={handleContentSchemaViewRenderStop}
@@ -88,6 +93,10 @@ export default function ContentSchemaTest({
           handleContentSchemaCreationRenderClose={
             handleContentSchemaCreationRenderClose
           }
+          handleUpdateDataOnSchemaCreation={handleUpdateDataOnSchemaCreation}
+          handleLoadingContentSchemaTestStart={
+            handleLoadingContentSchemaTestStart
+          }
         />
       ) : contentSchemaNameRender ? (
         <ContentSchemaName
@@ -96,12 +105,17 @@ export default function ContentSchemaTest({
         />
       ) : (
         <div>
+          <h3>
+            <strong>
+              Note: We only support one schema for now and once created it can
+              not be updated or deleted.
+            </strong>
+          </h3>
           <Paper
             style={{
               display: "flex",
               justifyContent: "space-between",
-              padding: "5px",
-              paddingLeft: "30px",
+              padding: "5px 30px",
             }}
           >
             <Typography
@@ -118,14 +132,13 @@ export default function ContentSchemaTest({
               Create Schema
             </Typography>
             <IconButton
-              color="inherit"
+              color="primary"
               style={{
                 width: "45px",
                 height: "45px",
-                border: "1px red solid",
-                color: "#fff",
-                backgroundColor: "#3f51b5",
+                border: "1px #3f51b5 solid",
               }}
+              disabled={disableCreateSchemaButton}
               onClick={handleContentSchemaNameRender}
             >
               <CreateIcon />
