@@ -6,7 +6,8 @@ import Login from "./component/Login.js";
 import Dashboard from "./component/Dashboard.js";
 
 //dev mode
-const dev = true;
+const dev = window.location.href.includes("localhost") ? true : false;
+console.log("dev", dev);
 
 // We'll define a portal to allow for developing on localhost.
 // When hosted on a skynet portal, SkynetClient doesn't need any arguments.

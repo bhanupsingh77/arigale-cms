@@ -5,8 +5,6 @@ import {
   Field,
   ErrorMessage,
   useFormikContext,
-  useField,
-  useFormik,
 } from "formik";
 
 export function Form(props) {
@@ -36,7 +34,7 @@ export function CustomField(props) {
         >{`${label} `}</label>
       )}
       <Field
-        className="form-control"
+        // className="form-control"
         type={type}
         style={{
           border: "2px solid #000",
@@ -112,10 +110,22 @@ export function SelectField(props) {
           {label}
         </label>
       )}
-      <Field as="select" id={id} name={name}>
-        <option value="">Choose...</option>
+      <Field
+        as="select"
+        id={id}
+        name={name}
+        style={{
+          border: "2px solid #000",
+          padding: "10px",
+          width: "30%",
+        }}
+      >
         {options.map((optn, index) => (
-          <option value={optn.value} label={optn.label || optn.value} />
+          <option
+            key={index}
+            value={optn.value}
+            label={optn.label || optn.value}
+          />
         ))}
       </Field>
       <ErrorMessage

@@ -1,24 +1,23 @@
 import React, { useState, useEffect } from "react";
-import ContentSchema from "./ContentSchema.js";
+// import ContentSchema from "./contentSchema/ContentSchema.js";
+// import ContentSchemaTest from "./contentSchema/ContentSchemaTest.js";
 
-import CreateContent from "./CreateContent.js";
+import CreateContent from "./createContent/CreateContent.js";
+import CreateContentTest from "./createContent/CreateContentTest.js";
+
+import ContentSchemaTest from "./contentSchema/ContentSchemaTest.js";
 
 import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   CssBaseline,
   Drawer,
-  Box,
   AppBar,
   Toolbar,
-  List,
   Typography,
   Divider,
   IconButton,
-  Badge,
   Container,
-  Grid,
-  Paper,
   Link,
   ListItem,
   ListItemIcon,
@@ -123,49 +122,122 @@ export default function Dashboard({
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [formSchema, setFormSchema] = useState([]);
+  const [contentSchemaNameList, setContentSchemaNameList] = useState(null);
+  const [contentSchemaNameListValue, setContentSchemaNameListValue] = useState(
+    null
+  );
+  const [disableCreateSchemaButton, setDisableCreateSchemaButton] = useState(
+    false
+  );
   const [formInitialValues, setFormInitialValues] = useState({});
-  const [updatedFormSchema, setupdatedFormSchema] = useState([]);
+  const [
+    updateDataOnSchemaCreation,
+    setUpdateDataOnSchemaCreation,
+  ] = useState();
+  const [loadingContentSchemaTest, setLoadingContentSchemaTest] = useState(
+    true
+  );
+  const [
+    loadingCreateContentUpdateData,
+    setLoadingCreateContentUpdateData,
+  ] = useState(false);
 
-  // getting formSchema and formInitialValues, value to pass to component CreateContent
+  // for only first schema for now
+  const [entryNumber, setEntryNumber] = useState(null);
+  const [createdNewContent, setCreatedNewContent] = useState(null);
+  // used to get content data for provided entry
+  const [savedContentEntryNumber, setSavedContentEntryNumber] = useState(null);
+  const [
+    initvalueForSavedContentEntry,
+    setInitvalueForSavedContentEntry,
+  ] = useState({});
+
+  //getting saved values for ContentSchema
   useEffect(() => {
-    async function initFormSchema() {
+    async function initContentSchema() {
       try {
-        // console.log("enterd forminit");
-        const filePath = dataDomain + "/" + "formSchema";
-        // console.log("filePath", filePath);
+        const filePath = dataDomain + "/" + "contentSchema";
         const { data } = await mySky.getJSON(filePath);
-        // console.log("dataget", data);
-        // console.log("dataget-type", typeof data);
+        // console.log("data1", data);
         if (data !== null) {
-          setFormSchema(data);
+          const filePath = dataDomain + "/" + "contentSchema";
+          let { data } = await mySky.getJSON(filePath);
+          // console.log("name", data[0]["name"]);
+          setContentSchemaNameList(data[0]["name"]);
+          const filePathSchema = filePath + "/" + data[0]["name"];
+          data = await mySky.getJSON(filePathSchema);
+          const contentSchemaValue = data.data;
+          setContentSchemaNameListValue(contentSchemaValue);
+          setDisableCreateSchemaButton(true);
           const initFormValue = {};
-          const dataKeys = data.map((obj) => {
+          const dataKeys = contentSchemaValue.map((obj) => {
             return Object.keys(obj)[0];
           });
           // console.log("datakeys init", dataKeys);
           dataKeys.map((key, i) => {
-            const formKey = data[i][key]["id"];
+            const formKey = contentSchemaValue[i][key]["id"];
             // console.log("formkey", formKey);
             initFormValue[formKey] = "";
             return null;
           });
           // console.log("new datakeys init val", initFormValue);
-          // console.log("data init schema type", dataKeys);
           setFormInitialValues(initFormValue);
+          // console.log("data2", data.data);
         }
-        // setLoadinginitFormSchema(false);
       } catch (error) {
-        console.log(`error with getJSON: ${error.message}`);
+        console.log(`error with mySky methods: ${error.message}`);
+      }
+      setLoadingContentSchemaTest(false);
+    }
+    initContentSchema();
+  }, [updateDataOnSchemaCreation]);
+
+  // for createContent
+  useEffect(() => {
+    async function initCreateContent() {
+      try {
+        const filePath =
+          dataDomain +
+          "/" +
+          "createContent" +
+          "/" +
+          contentSchemaNameList +
+          "/" +
+          "entry";
+        const { data } = await mySky.getJSON(filePath);
+        // console.log("entry data", data);
+        if (data !== null) {
+          // const { data } = await mySky.getJSON(filePath);
+          // console.log("data in table", data["entry"]);
+          setEntryNumber(data["entry"]);
+        }
+      } catch (error) {
+        console.log(`error with mySky methods: ${error.message}`);
       }
     }
+    initCreateContent();
+  }, [contentSchemaNameList, createdNewContent]);
 
-    initFormSchema();
-  }, [updatedFormSchema]);
+  // for getting saved content data for provided content entry number -> CreateContentUpdateData
+  useEffect(async () => {
+    try {
+      if (savedContentEntryNumber !== null) {
+        // console.log("savedContentEntryNumber", savedContentEntryNumber);
+        const filePath =
+          dataDomain +
+          "/" +
+          "createContent" +
+          "/" +
+          contentSchemaNameList +
+          "/" +
+          savedContentEntryNumber;
 
-  const updateFormSchema = (dataLink) => {
-    setupdatedFormSchema(dataLink);
-  };
+        const { data } = await mySky.getJSON(filePath);
+        setInitvalueForSavedContentEntry(data);
+        handleLoadingCreateContentUpdateDataStop();
+      }
+    } catch (error) {}
+  }, [savedContentEntryNumber]);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -176,6 +248,35 @@ export default function Dashboard({
 
   const handleListItemClick = (index) => {
     setSelectedIndex(index);
+  };
+
+  const handleUpdateSavedContentEntryNumber = (entry) => {
+    setSavedContentEntryNumber(entry);
+  };
+
+  const handleLoadingCreateContentUpdateDataStart = () => {
+    setLoadingCreateContentUpdateData(true);
+  };
+
+  const handleLoadingCreateContentUpdateDataStop = () => {
+    setLoadingCreateContentUpdateData(false);
+  };
+
+  const handleSavedContentEntryNumberValueReset = () => {
+    setSavedContentEntryNumber(null);
+  };
+
+  const handleCreatedNewContent = (entry) => {
+    // console.log("CreatedNewContent", entry);
+    setCreatedNewContent(entry);
+  };
+
+  const handleUpdateDataOnSchemaCreation = (value) => {
+    setUpdateDataOnSchemaCreation(value);
+  };
+
+  const handleLoadingContentSchemaTestStart = () => {
+    setLoadingContentSchemaTest(true);
   };
 
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
@@ -282,19 +383,57 @@ export default function Dashboard({
           // style={{ border: "10px blue solid" }}
         >
           {selectedIndex === 0 ? (
-            <ContentSchema
+            <ContentSchemaTest
               dataDomain={dataDomain}
               contentRecord={contentRecord}
               mySky={mySky}
-              updateFormSchema={updateFormSchema}
+              loadingContentSchemaTest={loadingContentSchemaTest}
+              contentSchemaNameList={contentSchemaNameList}
+              contentSchemaNameListValue={contentSchemaNameListValue}
+              disableCreateSchemaButton={disableCreateSchemaButton}
+              handleUpdateDataOnSchemaCreation={
+                handleUpdateDataOnSchemaCreation
+              }
+              handleLoadingContentSchemaTestStart={
+                handleLoadingContentSchemaTestStart
+              }
             />
           ) : (
-            <CreateContent
+            // <ContentSchema
+            //   dataDomain={dataDomain}
+            //   contentRecord={contentRecord}
+            //   mySky={mySky}
+            //   updateFormSchema={updateFormSchema}
+            // />
+            // <CreateContent
+            //   dataDomain={dataDomain}
+            //   contentRecord={contentRecord}
+            //   mySky={mySky}
+            //   formSchema={formSchema}
+            //   formInitialValues={formInitialValues}
+            // />
+            <CreateContentTest
               dataDomain={dataDomain}
               contentRecord={contentRecord}
               mySky={mySky}
-              formSchema={formSchema}
+              contentSchemaNameList={contentSchemaNameList}
+              contentSchemaNameListValue={contentSchemaNameListValue}
+              // formSchema={formSchema}
               formInitialValues={formInitialValues}
+              entryNumber={entryNumber}
+              initvalueForSavedContentEntry={initvalueForSavedContentEntry}
+              handleUpdateSavedContentEntryNumber={
+                handleUpdateSavedContentEntryNumber
+              }
+              handleLoadingCreateContentUpdateDataStart={
+                handleLoadingCreateContentUpdateDataStart
+              }
+              loadingCreateContentUpdateData={loadingCreateContentUpdateData}
+              handleSavedContentEntryNumberValueReset={
+                handleSavedContentEntryNumberValueReset
+              }
+              savedContentEntryNumber={savedContentEntryNumber}
+              handleCreatedNewContent={handleCreatedNewContent}
             />
           )}
         </Container>

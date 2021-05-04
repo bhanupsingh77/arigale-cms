@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Form } from "./FormElements";
-import { getFormElement } from "../utils.js";
+import { Form } from "../FormElements";
+import { getFormElement } from "../../utils.js";
 import { Button, CircularProgress } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import JSONPretty from "react-json-pretty";

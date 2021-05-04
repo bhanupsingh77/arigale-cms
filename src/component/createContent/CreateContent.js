@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { Form, SubmitButton, ResetButton } from "./FormElements";
-import { getFormElement } from "../utils.js";
+import { Form, SubmitButton, ResetButton } from "../FormElements";
+import { getFormElement } from "../../utils.js";
 import { makeStyles } from "@material-ui/core/styles";
-import { Backdrop, Button, CircularProgress } from "@material-ui/core";
+import { Button, CircularProgress } from "@material-ui/core";
 import JSONPretty from "react-json-pretty";
 
 // import * as Yup from "yup";
@@ -20,10 +20,6 @@ import JSONPretty from "react-json-pretty";
 var JSONPrettyMon = require("react-json-pretty/dist/monikai");
 
 const useStyles = makeStyles((theme) => ({
-  backdrop: {
-    zIndex: theme.zIndex.drawer + 1,
-    color: "#fff",
-  },
   container: {
     border: "4px black solid",
     margin: "5px",
@@ -66,7 +62,6 @@ function CreateContent({
   formInitialValues,
 }) {
   const classes = useStyles();
-  const [loadinginitFormSchema, setLoadinginitFormSchema] = useState(false);
   const [formData, setFormData] = useState([]);
   const [previewJsonData, setPreviewJsonData] = useState([]);
   const [buttonDisabled, setButtonDisabled] = useState(false);
@@ -149,7 +144,6 @@ function CreateContent({
       setLoadingAddToExistingJsonData(true);
       const { data } = await mySky.getJSON(filePath);
       if (data !== null) {
-        let val = [];
         // console.log("filePath", filePath);
         // const { data } = await mySky.getJSON(filePath);
         data.push(jsonData[0]);
@@ -224,11 +218,6 @@ function CreateContent({
 
   return (
     <div>
-      {loadinginitFormSchema ? (
-        <Backdrop className={classes.backdrop} open={loadinginitFormSchema}>
-          <CircularProgress color="inherit" />
-        </Backdrop>
-      ) : null}
       {formSchema.length >= 1 ? (
         <div>
           <div className={classes.container}>
