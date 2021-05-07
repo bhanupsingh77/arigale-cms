@@ -18,7 +18,8 @@ export function getFormElement(elementName, elementSchema) {
     elementSchema.type === "date" ||
     elementSchema.type === "url" ||
     elementSchema.type === "text" ||
-    elementSchema.type === "email"
+    elementSchema.type === "email" ||
+    elementSchema.type === "month"
   ) {
     return <CustomField {...props} />;
   }
