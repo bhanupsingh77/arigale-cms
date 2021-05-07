@@ -67,8 +67,10 @@ export default function ContentSchemaCreation({
     "author",
     "textarea",
     "date",
+    "month",
     "imageLink",
     "slug",
+    "audioLink",
   ];
 
   const addElementToFormSchema = async (element) => {
@@ -114,12 +116,32 @@ export default function ContentSchemaCreation({
           },
         };
         break;
+      case "audioLink":
+        val = {
+          audioLink: {
+            id: `${element}-${id}`,
+            type: "url",
+            label: "AudioLink",
+            required: true,
+          },
+        };
+        break;
       case "date":
         val = {
           date: {
             id: `${element}-${id}`,
             type: "date",
             label: "Date",
+            required: true,
+          },
+        };
+        break;
+      case "month":
+        val = {
+          month: {
+            id: `${element}-${id}`,
+            type: "month",
+            label: "Month",
             required: true,
           },
         };
@@ -155,7 +177,6 @@ export default function ContentSchemaCreation({
         };
         break;
     }
-    // console.log("val", val);
     setFormSchema([...formSchema, val]);
   };
 
@@ -234,19 +255,27 @@ export default function ContentSchemaCreation({
         <h1 style={{ textAlign: "center" }}>Content Schema</h1>
         <h1>{`Name: ${contentSchemaName}`}</h1>
         <h1>Select content elements to create a content Schema</h1>
-        {formElementsButtonList.map((element, i) => {
-          return (
-            <Button
-              key={i}
-              variant="contained"
-              color="primary"
-              style={{ border: "1px black solid", margin: "5px" }}
-              onClick={() => addElementToFormSchema(element)}
-            >
-              {`Add ${element}`}
-            </Button>
-          );
-        })}
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            justifyContent: "center",
+          }}
+        >
+          {formElementsButtonList.map((element, i) => {
+            return (
+              <Button
+                key={i}
+                variant="contained"
+                color="primary"
+                style={{ border: "1px black solid", margin: "5px" }}
+                onClick={() => addElementToFormSchema(element)}
+              >
+                {`Add ${element}`}
+              </Button>
+            );
+          })}
+        </div>
         {formSchema.length >= 1 ? (
           <div className={classes.container}>
             <h1>Current Content Schema</h1>
