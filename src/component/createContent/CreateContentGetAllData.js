@@ -16,6 +16,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function CreateContentGetAllData({
+  client,
   mySky,
   contentSchemaNameList,
   createContentFilePath,
@@ -42,7 +43,8 @@ export default function CreateContentGetAllData({
     );
     const allDataFilePath = filePath + "/" + "allContentData";
     const { dataLink } = await mySky.setJSON(allDataFilePath, dataArr);
-    setAllContentDataLink(dataLink.replace("sia:", ""));
+    const url = await client.getSkylinkUrl(dataLink);
+    setAllContentDataLink(url);
     setLoadingAllContentDataLink(false);
   };
 
@@ -117,9 +119,9 @@ export default function CreateContentGetAllData({
             </Typography>
             <a
               id="all-content-data"
-              href={`https://siasky.net/${allContentDataLink}`}
+              href={`${allContentDataLink}`}
               target="blank"
-            >{`https://siasky.net/${allContentDataLink}`}</a>
+            >{`${allContentDataLink}`}</a>
             <br />
 
             <Button

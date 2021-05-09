@@ -76,6 +76,7 @@ export default function App() {
     <div className="App">
       {loggedIn ? (
         <Dashboard
+          client={client}
           dataDomain={dataDomain}
           handleMySkyLogout={handleMySkyLogout}
           contentRecord={contentRecord}
