@@ -17,6 +17,7 @@ import CreateContentUpdateData from "./CreateContentUpdateData";
 import CreateContentGetAllData from "./CreateContentGetAllData";
 
 export default function CreateContentTest({
+  client,
   dataDomain,
   contentRecord,
   mySky,
@@ -166,6 +167,7 @@ export default function CreateContentTest({
           </Paper>
           {entryNumber ? (
             <CreateContentGetAllData
+              client={client}
               mySky={mySky}
               contentSchemaNameList={contentSchemaNameList}
               createContentFilePath={createContentFilePath}

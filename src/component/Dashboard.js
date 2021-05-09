@@ -114,6 +114,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function Dashboard({
+  client,
   dataDomain,
   handleMySkyLogout,
   contentRecord,
@@ -413,6 +414,7 @@ export default function Dashboard({
             //   formInitialValues={formInitialValues}
             // />
             <CreateContentTest
+              client={client}
               dataDomain={dataDomain}
               contentRecord={contentRecord}
               mySky={mySky}

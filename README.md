@@ -1,8 +1,8 @@
 ## Accese to website
 
-**https://arigale.hns.siasky.net/**
+**https://arigale.hns.siasky.dev/**
 
-##### Note: App added to skapp waitinging for to be passed for review(I will update here info accordingly)
+##### Note: App available at skapp store [click here](https://skapp.hns.siasky.dev/#/apps/all)
 
 ### Work in progress
 
