@@ -71,6 +71,7 @@ export default function CreateContentUpdateData({
     // console.log("init val form ", values);
     // console.log("entry on submit", savedContentEntryNumber);
     try {
+      values["_setting"]["updated_at"] = new Date().toISOString();
       const jsonData = values;
       const filePath =
         createContentFilePath +

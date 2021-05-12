@@ -186,7 +186,13 @@ export default function ContentSchemaCreation({
     try {
       const { data } = await mySky.getJSON(contentSchemaFilePath);
       if (data !== null) {
-        const jsonData = data.push({ name: contentSchemaName });
+        const val = {};
+        val["name"] = contentSchemaName;
+        val["_setting"] = {};
+        val["_setting"]["created_at"] = new Date().toISOString();
+        data.push(val);
+        const jsonData = data;
+
         // console.log("jsd", data);
         const { dataLink } = await mySky.setJSON(
           contentSchemaFilePath,
@@ -194,16 +200,24 @@ export default function ContentSchemaCreation({
         );
         // console.log("test1", dataLink);
       } else {
-        let arr = [];
-        arr.push({ name: contentSchemaName });
-        const { dataLink } = await mySky.setJSON(contentSchemaFilePath, arr);
-        // console.log("test2", dataLink);
+        const jsonData = [];
+        const val = {};
+        val["name"] = contentSchemaName;
+        val["_setting"] = {};
+        val["_setting"]["created_at"] = new Date().toISOString();
+        jsonData.push(val);
+        const { dataLink } = await mySky.setJSON(
+          contentSchemaFilePath,
+          jsonData
+        );
+        // console.log("test2_", dataLink);
       }
 
       const { dataLink } = await mySky.setJSON(
         contentSchemaCreationFilePath,
         jsonData
       );
+      // console.log("test3_", dataLink);
       // throw "bhanu";
       // console.log("content recordes version ?", data);
       await contentRecord.recordNewContent({
