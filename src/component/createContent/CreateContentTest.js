@@ -3,6 +3,7 @@ import React, { useState } from "react";
 // import { getFormElement } from "../../utils.js";
 // import { makeStyles } from "@material-ui/core/styles";
 import {
+  Backdrop,
   Button,
   CircularProgress,
   IconButton,
@@ -15,6 +16,14 @@ import CreateContentCreation from "./CreateContentCreation";
 import CreateContentTable from "./CreateContentTable";
 import CreateContentUpdateData from "./CreateContentUpdateData";
 import CreateContentGetAllData from "./CreateContentGetAllData";
+import { makeStyles } from "@material-ui/core/styles";
+
+const useStyles = makeStyles((theme) => ({
+  backdrop: {
+    zIndex: theme.zIndex.drawer + 1,
+    color: "#fff",
+  },
+}));
 
 export default function CreateContentTest({
   client,
@@ -27,6 +36,7 @@ export default function CreateContentTest({
   formInitialValues,
   entryNumber,
   initvalueForSavedContentEntry,
+  loadingCreateContentTest,
   handleUpdateSavedContentEntryNumber,
   handleLoadingCreateContentUpdateDataStart,
   loadingCreateContentUpdateData,
@@ -34,6 +44,7 @@ export default function CreateContentTest({
   savedContentEntryNumber,
   handleCreatedNewContent,
 }) {
+  const classes = useStyles();
   const [
     createContentSchemaTypeRender,
     setCreateContentSchemaTypeRender,
@@ -90,6 +101,9 @@ export default function CreateContentTest({
 
   return (
     <div>
+      <Backdrop className={classes.backdrop} open={loadingCreateContentTest}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
       {createContentUpdateDataRender ? (
         <CreateContentUpdateData
           contentSchemaNameList={contentSchemaNameList}

@@ -138,6 +138,9 @@ export default function Dashboard({
   const [loadingContentSchemaTest, setLoadingContentSchemaTest] = useState(
     true
   );
+  const [loadingCreateContentTest, setLoadingCreateContentTest] = useState(
+    false
+  );
   const [
     loadingCreateContentUpdateData,
     setLoadingCreateContentUpdateData,
@@ -196,6 +199,7 @@ export default function Dashboard({
   // for createContent
   useEffect(() => {
     async function initCreateContent() {
+      setLoadingCreateContentTest(true);
       try {
         const filePath =
           dataDomain +
@@ -215,6 +219,7 @@ export default function Dashboard({
       } catch (error) {
         console.log(`error with mySky methods: ${error.message}`);
       }
+      setLoadingCreateContentTest(false);
     }
     initCreateContent();
   }, [contentSchemaNameList, createdNewContent]);
@@ -424,6 +429,7 @@ export default function Dashboard({
               formInitialValues={formInitialValues}
               entryNumber={entryNumber}
               initvalueForSavedContentEntry={initvalueForSavedContentEntry}
+              loadingCreateContentTest={loadingCreateContentTest}
               handleUpdateSavedContentEntryNumber={
                 handleUpdateSavedContentEntryNumber
               }

@@ -75,11 +75,14 @@ export default function CreateContentCreation({
     handleLoadingContentCreationDataSaving(true);
     // console.log("init val form ", values);
     try {
+      values["_setting"] = {};
+      values["_setting"]["created_at"] = new Date().toISOString();
       const jsonData = values;
       const entryFilePath = createContentCreationFilePath + "/" + "entry";
       const { data } = await mySky.getJSON(entryFilePath);
       if (data !== null) {
         data["entry"] = data["entry"] + 1;
+        jsonData["_setting"]["entry"] = data["entry"];
         const filePath = createContentCreationFilePath + "/" + data["entry"];
         // console.log("entry update ?", data);
         await mySky.setJSON(entryFilePath, data);
@@ -92,6 +95,7 @@ export default function CreateContentCreation({
         handleCreatedNewContent(data["entry"]);
       } else {
         const entry = { entry: 1 };
+        jsonData["_setting"]["entry"] = entry["entry"];
         const filePath = createContentCreationFilePath + "/" + entry["entry"];
         await mySky.setJSON(entryFilePath, entry);
         const { dataLink } = await mySky.setJSON(filePath, jsonData);
