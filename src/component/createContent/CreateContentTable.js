@@ -14,6 +14,12 @@ const useStyles = makeStyles({
   table: {
     minWidth: 350,
   },
+  tableRow: {
+    "&:hover": {
+      backgroundColor: "#d3d3d32e",
+      cursor: "pointer",
+    },
+  },
 });
 
 export default function CreateContentTable({
@@ -48,29 +54,21 @@ export default function CreateContentTable({
                 <TableRow>
                   <TableCell>Entry</TableCell>
                   <TableCell align="left">Schema</TableCell>
-                  {/* placeholder */}
-                  <TableCell align="left"></TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {rows.map((row) => (
-                  <TableRow key={row.entry}>
+                  <TableRow
+                    key={row.entry}
+                    className={classes.tableRow}
+                    onClick={() =>
+                      handleCreateContentUpdateDataRender(row.entry)
+                    }
+                  >
                     <TableCell component="th" scope="row">
                       {row.entry}
                     </TableCell>
                     <TableCell align="left">{row.schema}</TableCell>
-                    <TableCell align="right">
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        style={{ border: "1px red solid" }}
-                        onClick={() =>
-                          handleCreateContentUpdateDataRender(row.entry)
-                        }
-                      >
-                        Update Entry
-                      </Button>
-                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>

@@ -13,6 +13,12 @@ const useStyles = makeStyles({
   table: {
     minWidth: 350,
   },
+  tableRow: {
+    "&:hover": {
+      backgroundColor: "#d3d3d32e",
+      cursor: "pointer",
+    },
+  },
 });
 
 export default function ContentSchemaTable({
@@ -37,27 +43,19 @@ export default function ContentSchemaTable({
                 <TableRow>
                   <TableCell>Name</TableCell>
                   <TableCell align="left">ID</TableCell>
-                  {/* placeholder */}
-                  <TableCell align="left"></TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {rows.map((row) => (
-                  <TableRow key={row.name}>
+                  <TableRow
+                    key={row.name}
+                    className={classes.tableRow}
+                    onClick={handleContentSchemaViewRender}
+                  >
                     <TableCell component="th" scope="row">
                       {row.name}
                     </TableCell>
                     <TableCell align="left">{row.id}</TableCell>
-                    <TableCell align="right">
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        style={{ border: "1px red solid" }}
-                        onClick={handleContentSchemaViewRender}
-                      >
-                        view schema
-                      </Button>
-                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
