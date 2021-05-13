@@ -17,6 +17,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function CreateContentGetAllData({
   client,
+  contentRecord,
   mySky,
   contentSchemaNameList,
   createContentFilePath,
@@ -43,6 +44,10 @@ export default function CreateContentGetAllData({
     );
     const allDataFilePath = filePath + "/" + "allContentData";
     const { dataLink } = await mySky.setJSON(allDataFilePath, dataArr);
+    await contentRecord.recordInteraction({
+      skylink: dataLink,
+      metadata: { content: "content api generated" },
+    });
     const url = await client.getSkylinkUrl(dataLink);
     setAllContentDataLink(url);
     setLoadingAllContentDataLink(false);

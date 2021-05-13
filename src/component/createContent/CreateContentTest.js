@@ -182,6 +182,7 @@ export default function CreateContentTest({
           {entryNumber ? (
             <CreateContentGetAllData
               client={client}
+              contentRecord={contentRecord}
               mySky={mySky}
               contentSchemaNameList={contentSchemaNameList}
               createContentFilePath={createContentFilePath}
