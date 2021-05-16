@@ -50,6 +50,7 @@ export default function ContentSchemaCreation({
   handleContentSchemaCreationRenderClose,
   handleUpdateDataOnSchemaCreation,
   handleLoadingContentSchemaTestStart,
+  handleDialogOpen,
 }) {
   const classes = useStyles();
   const [formSchema, setFormSchema] = useState([]);
@@ -214,6 +215,7 @@ export default function ContentSchemaCreation({
           contentSchemaFilePath,
           jsonData
         );
+        handleDialogOpen();
       }
 
       await contentRecord.recordNewContent({
@@ -226,11 +228,11 @@ export default function ContentSchemaCreation({
       handleLoadingContentSchemaTestStart();
       setButtonDisabled(false);
       setLoadingSaveJsonData(false);
-      handleContentSchemaCreationRenderClose();
       handleSnackbarOpen(
         `Content Schema ${contentSchemaName} created.`,
         "success"
       );
+      handleContentSchemaCreationRenderClose();
     } catch (error) {
       console.log(`error with setJSON or getJSON: ${error.message}`);
       setButtonDisabled(false);

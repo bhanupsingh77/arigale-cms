@@ -6,6 +6,11 @@ import {
   CircularProgress,
   Paper,
   Typography,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
 } from "@material-ui/core";
 import ContentSchemaName from "./ContentSchemaName";
 import ContentSchemaCreation from "./ContentSchemaCreation";
@@ -41,6 +46,7 @@ export default function ContentSchemaTest({
     setcontentSchemaCreationRender,
   ] = useState(false);
   const [contentSchemaViewRender, setcontentSchemaViewRender] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   const contentSchemaFilePath = dataDomain + "/" + "contentSchema";
 
@@ -71,11 +77,40 @@ export default function ContentSchemaTest({
     setcontentSchemaViewRender(false);
   };
 
+  const handleDialogOpen = () => {
+    setDialogOpen(true);
+  };
+
+  const handleDialogClose = () => {
+    setDialogOpen(false);
+  };
+
   return (
     <div>
       <Backdrop className={classes.backdrop} open={loadingContentSchemaTest}>
         <CircularProgress color="inherit" />
       </Backdrop>
+      <Dialog
+        open={dialogOpen}
+        // onClose={handleDialogClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          Congratulations on creating Content Schema!
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            What now ? Head to create content section option on side bar and
+            create your first content!
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDialogClose} color="primary" autoFocus>
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
       {contentSchemaViewRender ? (
         <ContentSchemaView
           contentRecord={contentRecord}
@@ -99,6 +134,7 @@ export default function ContentSchemaTest({
           handleLoadingContentSchemaTestStart={
             handleLoadingContentSchemaTestStart
           }
+          handleDialogOpen={handleDialogOpen}
         />
       ) : contentSchemaNameRender ? (
         <ContentSchemaName

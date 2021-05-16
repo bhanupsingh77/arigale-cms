@@ -64,6 +64,7 @@ export default function CreateContentCreation({
   handleSnackbarOpen,
   handleCreateContentCreationRenderStop,
   handleCreatedNewContent,
+  handleDialogOpen,
 }) {
   const classes = useStyles();
   const [loadingContentCreation, setLoadingContentCreation] = useState(false);
@@ -104,6 +105,7 @@ export default function CreateContentCreation({
         //update entry number
         await mySky.setJSON(entryFilePath, entry);
         handleCreatedNewContent(entry["entry"]);
+        handleDialogOpen();
       }
       setLoadingContentCreation(false);
       setSubmitting(false);
