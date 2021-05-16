@@ -107,14 +107,14 @@ export default function CreateContentCreation({
         handleCreatedNewContent(entry["entry"]);
         handleDialogOpen();
       }
-      setLoadingContentCreation(false);
       setSubmitting(false);
+      setLoadingContentCreation(false);
       handleSnackbarOpen("Content data saved.", "success");
       handleCreateContentCreationRenderStop();
     } catch (error) {
       console.log(`error with setJSON or getJSON: ${error.message}`);
-      setLoadingContentCreation(false);
       setSubmitting(false);
+      setLoadingContentCreation(false);
       handleSnackbarOpen("Failed to save content data.Try again.", "error");
     }
   };
