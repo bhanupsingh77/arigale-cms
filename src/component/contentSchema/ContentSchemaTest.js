@@ -29,6 +29,7 @@ export default function ContentSchemaTest({
   contentSchemaNameList,
   contentSchemaNameListValue,
   disableCreateSchemaButton,
+  handleSnackbarOpen,
   handleUpdateDataOnSchemaCreation,
   handleLoadingContentSchemaTestStart,
 }) {
@@ -90,6 +91,7 @@ export default function ContentSchemaTest({
           mySky={mySky}
           contentSchemaFilePath={contentSchemaFilePath}
           contentSchemaName={contentSchemaName}
+          handleSnackbarOpen={handleSnackbarOpen}
           handleContentSchemaCreationRenderClose={
             handleContentSchemaCreationRenderClose
           }

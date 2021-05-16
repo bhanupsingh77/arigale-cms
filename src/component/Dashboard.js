@@ -23,12 +23,18 @@ import {
   ListItemIcon,
   ListItemText,
   Button,
+  Snackbar,
 } from "@material-ui/core";
 
+import MuiAlert from "@material-ui/lab/Alert";
 import MenuIcon from "@material-ui/icons/Menu";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import DescriptionIcon from "@material-ui/icons/Description";
 import ViewQuiltIcon from "@material-ui/icons/ViewQuilt";
+
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 const drawerWidth = 240;
 
@@ -123,6 +129,9 @@ export default function Dashboard({
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState();
+  const [snackbarAlertVariant, setSnackbarAlertVariant] = useState();
   const [contentSchemaNameList, setContentSchemaNameList] = useState(null);
   const [contentSchemaNameListValue, setContentSchemaNameListValue] = useState(
     null
@@ -256,6 +265,15 @@ export default function Dashboard({
     setSelectedIndex(index);
   };
 
+  const handleSnackbarOpen = (message, alertVariant) => {
+    setSnackbarAlertVariant(alertVariant);
+    setSnackbarMessage(message);
+    setSnackbarOpen(true);
+  };
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
+
   const handleUpdateSavedContentEntryNumber = (entry) => {
     setSavedContentEntryNumber(entry);
   };
@@ -289,6 +307,16 @@ export default function Dashboard({
 
   return (
     <div className={classes.root}>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        onClose={handleSnackbarClose}
+      >
+        <Alert onClose={handleSnackbarClose} severity={snackbarAlertVariant}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
       <CssBaseline />
       <AppBar
         position="absolute"
@@ -397,6 +425,7 @@ export default function Dashboard({
               contentSchemaNameList={contentSchemaNameList}
               contentSchemaNameListValue={contentSchemaNameListValue}
               disableCreateSchemaButton={disableCreateSchemaButton}
+              handleSnackbarOpen={handleSnackbarOpen}
               handleUpdateDataOnSchemaCreation={
                 handleUpdateDataOnSchemaCreation
               }
@@ -430,6 +459,7 @@ export default function Dashboard({
               entryNumber={entryNumber}
               initvalueForSavedContentEntry={initvalueForSavedContentEntry}
               loadingCreateContentTest={loadingCreateContentTest}
+              handleSnackbarOpen={handleSnackbarOpen}
               handleUpdateSavedContentEntryNumber={
                 handleUpdateSavedContentEntryNumber
               }

@@ -58,6 +58,7 @@ export default function CreateContentUpdateData({
   contentSchemaNameList,
   contentSchemaNameListValue,
   handleCreateContentUpdateDataRenderStop,
+  handleSnackbarOpen,
   initvalueForSavedContentEntry,
   loadingCreateContentUpdateData,
   savedContentEntryNumber,
@@ -67,10 +68,8 @@ export default function CreateContentUpdateData({
   const [updatingData, setUpdatingData] = useState(false);
 
   const onSubmit = async (values, { setSubmitting, resetForm, setStatus }) => {
-    setUpdatingData(true);
-    // console.log("init val form ", values);
-    // console.log("entry on submit", savedContentEntryNumber);
     try {
+      setUpdatingData(true);
       values["_setting"]["updated_at"] = new Date().toISOString();
       const jsonData = values;
       const filePath =
@@ -79,19 +78,22 @@ export default function CreateContentUpdateData({
         contentSchemaNameList +
         "/" +
         savedContentEntryNumber;
+      // updating data at given entry number
       const { data, dataLink } = await mySky.setJSON(filePath, jsonData);
-      // console.log("updated data", data);
       await contentRecord.recordInteraction({
         skylink: dataLink,
         metadata: { content: "updated" },
       });
+      setSubmitting(false);
+      setUpdatingData(false);
+      handleSnackbarOpen("Content data updated.", "success");
+      handleCreateContentUpdateDataRenderStop();
     } catch (error) {
       console.log(`error with setJSON: ${error.message}`);
+      setSubmitting(false);
+      setUpdatingData(false);
+      handleSnackbarOpen("Failed to update data.Try again.", "error");
     }
-
-    setSubmitting(false);
-    setUpdatingData(false);
-    handleCreateContentUpdateDataRenderStop();
   };
 
   return (

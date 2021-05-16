@@ -37,6 +37,7 @@ export default function CreateContentTest({
   entryNumber,
   initvalueForSavedContentEntry,
   loadingCreateContentTest,
+  handleSnackbarOpen,
   handleUpdateSavedContentEntryNumber,
   handleLoadingCreateContentUpdateDataStart,
   loadingCreateContentUpdateData,
@@ -59,10 +60,10 @@ export default function CreateContentTest({
     setCreateContentUpdateDataRender,
   ] = useState(false);
 
-  const [
-    loadingContentCreationDataSaving,
-    setLoadingContentCreationDataSaving,
-  ] = useState(false);
+  // const [
+  //   loadingContentCreationDataSaving,
+  //   setLoadingContentCreationDataSaving,
+  // ] = useState(false);
 
   const handleCreateContentSchemaTypeRender = () => {
     setCreateContentSchemaTypeRender(true);
@@ -93,9 +94,9 @@ export default function CreateContentTest({
     handleSavedContentEntryNumberValueReset();
   };
 
-  const handleLoadingContentCreationDataSaving = (v) => {
-    setLoadingContentCreationDataSaving(v);
-  };
+  // const handleLoadingContentCreationDataSaving = (v) => {
+  //   setLoadingContentCreationDataSaving(v);
+  // };
 
   const createContentFilePath = dataDomain + "/" + "createContent";
 
@@ -106,17 +107,18 @@ export default function CreateContentTest({
       </Backdrop>
       {createContentUpdateDataRender ? (
         <CreateContentUpdateData
+          contentRecord={contentRecord}
+          mySky={mySky}
+          createContentFilePath={createContentFilePath}
+          savedContentEntryNumber={savedContentEntryNumber}
           contentSchemaNameList={contentSchemaNameList}
           contentSchemaNameListValue={contentSchemaNameListValue}
           handleCreateContentUpdateDataRenderStop={
             handleCreateContentUpdateDataRenderStop
           }
+          handleSnackbarOpen={handleSnackbarOpen}
           initvalueForSavedContentEntry={initvalueForSavedContentEntry}
           loadingCreateContentUpdateData={loadingCreateContentUpdateData}
-          savedContentEntryNumber={savedContentEntryNumber}
-          createContentFilePath={createContentFilePath}
-          contentRecord={contentRecord}
-          mySky={mySky}
         />
       ) : createContentCreationRender ? (
         <CreateContentCreation
@@ -126,15 +128,16 @@ export default function CreateContentTest({
           createContentFilePath={createContentFilePath}
           contentSchemaNameList={contentSchemaNameList}
           contentSchemaNameListValue={contentSchemaNameListValue}
+          handleSnackbarOpen={handleSnackbarOpen}
           // // formSchema={formSchema}
           formInitialValues={formInitialValues}
           handleCreateContentCreationRenderStop={
             handleCreateContentCreationRenderStop
           }
-          loadingContentCreationDataSaving={loadingContentCreationDataSaving}
-          handleLoadingContentCreationDataSaving={
-            handleLoadingContentCreationDataSaving
-          }
+          // loadingContentCreationDataSaving={loadingContentCreationDataSaving}
+          // handleLoadingContentCreationDataSaving={
+          //   handleLoadingContentCreationDataSaving
+          // }
           handleCreatedNewContent={handleCreatedNewContent}
         />
       ) : createContentSchemaTypeRender ? (
@@ -184,9 +187,10 @@ export default function CreateContentTest({
               client={client}
               contentRecord={contentRecord}
               mySky={mySky}
+              entryNumber={entryNumber}
               contentSchemaNameList={contentSchemaNameList}
               createContentFilePath={createContentFilePath}
-              entryNumber={entryNumber}
+              handleSnackbarOpen={handleSnackbarOpen}
             />
           ) : null}
           {
