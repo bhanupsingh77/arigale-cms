@@ -46,9 +46,11 @@ export default function ContentSchemaCreation({
   mySky,
   contentSchemaFilePath,
   contentSchemaName,
+  handleSnackbarOpen,
   handleContentSchemaCreationRenderClose,
   handleUpdateDataOnSchemaCreation,
   handleLoadingContentSchemaTestStart,
+  handleDialogOpen,
 }) {
   const classes = useStyles();
   const [formSchema, setFormSchema] = useState([]);
@@ -181,9 +183,15 @@ export default function ContentSchemaCreation({
   };
 
   const handleMySkyWrite = async (jsonData) => {
-    setButtonDisabled(true);
-    setLoadingSaveJsonData(true);
     try {
+      setButtonDisabled(true);
+      setLoadingSaveJsonData(true);
+      // write form schema at given name
+      const { dataLink } = await mySky.setJSON(
+        contentSchemaCreationFilePath,
+        jsonData
+      );
+      // check if there is Schema name list empty or not
       const { data } = await mySky.getJSON(contentSchemaFilePath);
       if (data !== null) {
         const val = {};
@@ -192,13 +200,10 @@ export default function ContentSchemaCreation({
         val["_setting"]["created_at"] = new Date().toISOString();
         data.push(val);
         const jsonData = data;
-
-        // console.log("jsd", data);
         const { dataLink } = await mySky.setJSON(
           contentSchemaFilePath,
           jsonData
         );
-        // console.log("test1", dataLink);
       } else {
         const jsonData = [];
         const val = {};
@@ -210,31 +215,30 @@ export default function ContentSchemaCreation({
           contentSchemaFilePath,
           jsonData
         );
-        // console.log("test2_", dataLink);
+        handleDialogOpen();
       }
 
-      const { dataLink } = await mySky.setJSON(
-        contentSchemaCreationFilePath,
-        jsonData
-      );
-      // console.log("test3_", dataLink);
-      // throw "bhanu";
-      // console.log("content recordes version ?", data);
       await contentRecord.recordNewContent({
         skylink: dataLink,
         metadata: {
           contentSchema: `New Content Schema created: ${contentSchemaName}`,
         },
       });
-      // console.log("datalink", dataLink);
       handleUpdateDataOnSchemaCreation(dataLink);
       handleLoadingContentSchemaTestStart();
+      setButtonDisabled(false);
+      setLoadingSaveJsonData(false);
+      handleSnackbarOpen(
+        `Content Schema ${contentSchemaName} created.`,
+        "success"
+      );
       handleContentSchemaCreationRenderClose();
     } catch (error) {
-      console.log(`error with setJSON: ${error.message}`);
+      console.log(`error with setJSON or getJSON: ${error.message}`);
+      setButtonDisabled(false);
+      setLoadingSaveJsonData(false);
+      handleSnackbarOpen(`Failed to create Content Schema.Try again.`, "error");
     }
-    setLoadingSaveJsonData(false);
-    setButtonDisabled(false);
   };
 
   const resetFormSchema = () => {

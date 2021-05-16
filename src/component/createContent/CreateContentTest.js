@@ -9,6 +9,11 @@ import {
   IconButton,
   Paper,
   Typography,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
 } from "@material-ui/core";
 import CreateIcon from "@material-ui/icons/Create";
 import CreateContentSchemaType from "./CreateContentSchemaType";
@@ -37,6 +42,7 @@ export default function CreateContentTest({
   entryNumber,
   initvalueForSavedContentEntry,
   loadingCreateContentTest,
+  handleSnackbarOpen,
   handleUpdateSavedContentEntryNumber,
   handleLoadingCreateContentUpdateDataStart,
   loadingCreateContentUpdateData,
@@ -53,16 +59,16 @@ export default function CreateContentTest({
     createContentCreationRender,
     setCreateContentCreationRender,
   ] = useState(false);
-
   const [
     createContentUpdateDataRender,
     setCreateContentUpdateDataRender,
   ] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
-  const [
-    loadingContentCreationDataSaving,
-    setLoadingContentCreationDataSaving,
-  ] = useState(false);
+  // const [
+  //   loadingContentCreationDataSaving,
+  //   setLoadingContentCreationDataSaving,
+  // ] = useState(false);
 
   const handleCreateContentSchemaTypeRender = () => {
     setCreateContentSchemaTypeRender(true);
@@ -93,8 +99,15 @@ export default function CreateContentTest({
     handleSavedContentEntryNumberValueReset();
   };
 
-  const handleLoadingContentCreationDataSaving = (v) => {
-    setLoadingContentCreationDataSaving(v);
+  // const handleLoadingContentCreationDataSaving = (v) => {
+  //   setLoadingContentCreationDataSaving(v);
+  // };
+  const handleDialogOpen = () => {
+    setDialogOpen(true);
+  };
+
+  const handleDialogClose = () => {
+    setDialogOpen(false);
   };
 
   const createContentFilePath = dataDomain + "/" + "createContent";
@@ -104,19 +117,42 @@ export default function CreateContentTest({
       <Backdrop className={classes.backdrop} open={loadingCreateContentTest}>
         <CircularProgress color="inherit" />
       </Backdrop>
+      <Dialog
+        open={dialogOpen}
+        // onClose={handleDialogClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          Congratulations on creating your first content!
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            What to do this with content ? Want to pubish it to a website, join
+            our discord group by clicking the option on menu bar and get in
+            touch with our team Arigale there, we will help you!
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDialogClose} color="primary" autoFocus>
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
       {createContentUpdateDataRender ? (
         <CreateContentUpdateData
+          contentRecord={contentRecord}
+          mySky={mySky}
+          createContentFilePath={createContentFilePath}
+          savedContentEntryNumber={savedContentEntryNumber}
           contentSchemaNameList={contentSchemaNameList}
           contentSchemaNameListValue={contentSchemaNameListValue}
           handleCreateContentUpdateDataRenderStop={
             handleCreateContentUpdateDataRenderStop
           }
+          handleSnackbarOpen={handleSnackbarOpen}
           initvalueForSavedContentEntry={initvalueForSavedContentEntry}
           loadingCreateContentUpdateData={loadingCreateContentUpdateData}
-          savedContentEntryNumber={savedContentEntryNumber}
-          createContentFilePath={createContentFilePath}
-          contentRecord={contentRecord}
-          mySky={mySky}
         />
       ) : createContentCreationRender ? (
         <CreateContentCreation
@@ -126,16 +162,18 @@ export default function CreateContentTest({
           createContentFilePath={createContentFilePath}
           contentSchemaNameList={contentSchemaNameList}
           contentSchemaNameListValue={contentSchemaNameListValue}
+          handleSnackbarOpen={handleSnackbarOpen}
           // // formSchema={formSchema}
           formInitialValues={formInitialValues}
           handleCreateContentCreationRenderStop={
             handleCreateContentCreationRenderStop
           }
-          loadingContentCreationDataSaving={loadingContentCreationDataSaving}
-          handleLoadingContentCreationDataSaving={
-            handleLoadingContentCreationDataSaving
-          }
+          // loadingContentCreationDataSaving={loadingContentCreationDataSaving}
+          // handleLoadingContentCreationDataSaving={
+          //   handleLoadingContentCreationDataSaving
+          // }
           handleCreatedNewContent={handleCreatedNewContent}
+          handleDialogOpen={handleDialogOpen}
         />
       ) : createContentSchemaTypeRender ? (
         <CreateContentSchemaType
@@ -184,9 +222,10 @@ export default function CreateContentTest({
               client={client}
               contentRecord={contentRecord}
               mySky={mySky}
+              entryNumber={entryNumber}
               contentSchemaNameList={contentSchemaNameList}
               createContentFilePath={createContentFilePath}
-              entryNumber={entryNumber}
+              handleSnackbarOpen={handleSnackbarOpen}
             />
           ) : null}
           {

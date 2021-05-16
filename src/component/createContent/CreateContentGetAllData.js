@@ -19,9 +19,10 @@ export default function CreateContentGetAllData({
   client,
   contentRecord,
   mySky,
+  entryNumber,
   contentSchemaNameList,
   createContentFilePath,
-  entryNumber,
+  handleSnackbarOpen,
 }) {
   const classes = useStyles();
   const [allContentDataLink, setAllContentDataLink] = useState(null);
@@ -30,32 +31,40 @@ export default function CreateContentGetAllData({
   );
 
   const handleGetAllDataDataLink = async () => {
-    // console.log("started");
-    setLoadingAllContentDataLink(true);
-    const filePath = createContentFilePath + "/" + contentSchemaNameList;
-    const arr = Array(entryNumber).fill(entryNumber);
-    const dataArr = await Promise.all(
-      arr.map(async (e, i) => {
-        const currentFilePath = filePath + "/" + (i + 1);
-        //   console.log(currentFilePath);
-        const { data } = await mySky.getJSON(currentFilePath);
-        return data;
-      })
-    );
-    const allDataFilePath = filePath + "/" + "allContentData";
-    const { dataLink } = await mySky.setJSON(allDataFilePath, dataArr);
-    await contentRecord.recordInteraction({
-      skylink: dataLink,
-      metadata: { content: "content api generated" },
-    });
-    const url = await client.getSkylinkUrl(dataLink);
-    setAllContentDataLink(url);
-    setLoadingAllContentDataLink(false);
+    try {
+      setLoadingAllContentDataLink(true);
+      const filePath = createContentFilePath + "/" + contentSchemaNameList;
+      const arr = Array(entryNumber).fill(entryNumber);
+      const dataArr = await Promise.all(
+        arr.map(async (e, i) => {
+          const currentFilePath = filePath + "/" + (i + 1);
+          //   console.log(currentFilePath);
+          const { data } = await mySky.getJSON(currentFilePath);
+          return data;
+        })
+      );
+      const allDataFilePath = filePath + "/" + "allContentData";
+      const { dataLink } = await mySky.setJSON(allDataFilePath, dataArr);
+      const url = await client.getSkylinkUrl(dataLink);
+      await contentRecord.recordNewContent({
+        skylink: dataLink,
+        metadata: { content: "Content data API generated" },
+      });
+      setAllContentDataLink(url);
+      handleSnackbarOpen("DataLink generated.", "success");
+    } catch (error) {
+      console.log(`error with setJSON or getJSON: ${error.message}`);
+      setAllContentDataLink(null);
+      handleSnackbarOpen("Failed to generate DataLink.Try again.", "error");
+    } finally {
+      setLoadingAllContentDataLink(false);
+    }
   };
 
   const handleCopyDataLink = async () => {
     const text = document.getElementById("all-content-data").innerText;
     await navigator.clipboard.writeText(text);
+    handleSnackbarOpen("DataLink copied.", "success");
   };
 
   // console.log("arr", allContentDataLink);

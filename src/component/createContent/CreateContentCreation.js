@@ -61,20 +61,19 @@ export default function CreateContentCreation({
   contentSchemaNameList,
   contentSchemaNameListValue,
   formInitialValues,
+  handleSnackbarOpen,
   handleCreateContentCreationRenderStop,
-  loadingContentCreationDataSaving,
-  handleLoadingContentCreationDataSaving,
   handleCreatedNewContent,
+  handleDialogOpen,
 }) {
   const classes = useStyles();
-
+  const [loadingContentCreation, setLoadingContentCreation] = useState(false);
   const createContentCreationFilePath =
     createContentFilePath + "/" + contentSchemaNameList;
 
   const onSubmit = async (values, { setSubmitting, resetForm, setStatus }) => {
-    handleLoadingContentCreationDataSaving(true);
-    // console.log("init val form ", values);
     try {
+      setLoadingContentCreation(true);
       values["_setting"] = {};
       values["_setting"]["created_at"] = new Date().toISOString();
       const jsonData = values;
@@ -84,42 +83,45 @@ export default function CreateContentCreation({
         data["entry"] = data["entry"] + 1;
         jsonData["_setting"]["entry"] = data["entry"];
         const filePath = createContentCreationFilePath + "/" + data["entry"];
-        // console.log("entry update ?", data);
-        await mySky.setJSON(entryFilePath, data);
+        //write data at entry number
         const { dataLink } = await mySky.setJSON(filePath, jsonData);
-        // console.log("saved data", dataLink);
         await contentRecord.recordInteraction({
           skylink: dataLink,
           metadata: { content: "created" },
         });
+        //update entry number
+        await mySky.setJSON(entryFilePath, data);
         handleCreatedNewContent(data["entry"]);
       } else {
         const entry = { entry: 1 };
         jsonData["_setting"]["entry"] = entry["entry"];
         const filePath = createContentCreationFilePath + "/" + entry["entry"];
-        await mySky.setJSON(entryFilePath, entry);
+        //write data at entry number
         const { dataLink } = await mySky.setJSON(filePath, jsonData);
-        // console.log("saved data-1", dataLink);
         await contentRecord.recordInteraction({
           skylink: dataLink,
           metadata: { content: "created" },
         });
+        //update entry number
+        await mySky.setJSON(entryFilePath, entry);
         handleCreatedNewContent(entry["entry"]);
+        handleDialogOpen();
       }
+      setSubmitting(false);
+      setLoadingContentCreation(false);
+      handleSnackbarOpen("Content data saved.", "success");
+      handleCreateContentCreationRenderStop();
     } catch (error) {
       console.log(`error with setJSON or getJSON: ${error.message}`);
+      setSubmitting(false);
+      setLoadingContentCreation(false);
+      handleSnackbarOpen("Failed to save content data.Try again.", "error");
     }
-
-    setSubmitting(false);
-    handleLoadingContentCreationDataSaving(false);
-    handleCreateContentCreationRenderStop();
   };
+
   return (
     <div>
-      <Backdrop
-        className={classes.backdrop}
-        open={loadingContentCreationDataSaving}
-      >
+      <Backdrop className={classes.backdrop} open={loadingContentCreation}>
         <CircularProgress color="inherit" />
       </Backdrop>
       <div style={{ display: "flex", justifyContent: "flex-end" }}>
